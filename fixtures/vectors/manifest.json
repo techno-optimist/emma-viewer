@@ -1,0 +1,551 @@
+{
+  "fixture": true,
+  "license": "CC0-1.0",
+  "generator": "tools/make-fixtures.mjs",
+  "iterations": 600000,
+  "description": "Invented test vectors for emma-viewer. No real vault, person, passphrase or recording. Salts and nonces are derived from each name so the files reproduce exactly.",
+  "errors": {
+    "notEmma": "Refused by the file header, before any key derivation.",
+    "cannotUnlock": "Key derivation ran; authentication failed.",
+    "unsupported": "Authenticated and decrypted, then refused by the payload rules. Nothing is shown."
+  },
+  "vectors": [
+    {
+      "file": "web-v3.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "open",
+      "envelope": "EMMA/2.0",
+      "payloadSchema": "emma-local-vault/3",
+      "readAs": "emma-local-vault/3",
+      "kind": "web",
+      "counts": {
+        "memories": 6,
+        "removed": 1,
+        "people": 2,
+        "identityDocuments": 3
+      },
+      "note": "Full web vault: attachments (image, audio, video), one memory in Trash, identity documents, opaque fields.",
+      "sha256": {
+        "file": "2d9152a0881d768da208880424f05d778e18275333bf1ecff27c55814045fbc4",
+        "plaintext": "514ee0bfab96291c701fb7a8c33b8a3000fd78b8b3032e9e4da16915494819d9",
+        "derivedKey": "1edb3727ea93d252a21c7ebad0726f5d9ddb81be0c03b0361feba5f6a102035b",
+        "reading": "49d0e1b09c165b5d88f552da27bdd796af04c70c953ae0924014f9d30e6ddd89"
+      }
+    },
+    {
+      "file": "web-v2.emma",
+      "passphrase": "  Fixture café 🪷 é phrase  ",
+      "expect": "open",
+      "envelope": "EMMA/2.0",
+      "payloadSchema": "emma-local-vault/2",
+      "readAs": "emma-local-vault/3",
+      "kind": "web",
+      "counts": {
+        "memories": 2,
+        "removed": 0,
+        "people": 2,
+        "identityDocuments": 0
+      },
+      "note": "Payload /2, read as /3. Passphrase keeps its spaces, accents and emoji exactly.",
+      "sha256": {
+        "file": "3230e2de795e6b06920a1bd733733f516a00c5a29cec8e5d390c5f484155265f",
+        "plaintext": "9702a46e6f47da3bd3b45d5322ba0d89eb3d4a066e776829064beaadbf8522cd",
+        "derivedKey": "00a21d6f191cd2955592a4bce78a606da0b993a75b7b84c6a859eb0eb654770b",
+        "reading": "56df4a45da601ddd5ba4dcb75b975fcddaafd38195f24ef46230c2905bb6f93f"
+      }
+    },
+    {
+      "file": "web-v3-empty.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "open",
+      "envelope": "EMMA/2.0",
+      "payloadSchema": "emma-local-vault/3",
+      "readAs": "emma-local-vault/3",
+      "kind": "web",
+      "counts": {
+        "memories": 0,
+        "removed": 0,
+        "people": 0,
+        "identityDocuments": 0
+      },
+      "note": "A vault with no memories.",
+      "sha256": {
+        "file": "299f785835fb2670e1311ea3246771a7bb4e622ee2cf524bf84115397bc1d6c9",
+        "plaintext": "d0d17970827dffc9825673a77847634d42f3eed9777d27e9ceb88248584d610f",
+        "derivedKey": "36af3a25d8cc30235b03e21c2d95c2d7af5788e38f37de033da8433cbd1a9867",
+        "reading": "4a944790ee4052cd11713922d0a4118c47fe01794e97cb64bf5d34ce4b53a7df"
+      }
+    },
+    {
+      "file": "legacy-v1.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "open",
+      "envelope": "EMMA/1.0",
+      "payloadSchema": "EMMA/1.0 legacy",
+      "readAs": "legacy",
+      "kind": "legacy",
+      "counts": {
+        "memories": 3,
+        "removed": 0,
+        "people": 1,
+        "identityDocuments": 0
+      },
+      "note": "Recovered EMMA 1.0: unauthenticated header, 100000 iterations, no AAD. Read-only with a warning. Media not shown.",
+      "sha256": {
+        "file": "3ff05ca4d1c28bea35d5b73d1fd1d96152b68d12ed874f02702e094695533263",
+        "plaintext": "2c7338f7ec38839a923fedbcf05d5ee33063a205fca55a849bc57e220922f796",
+        "derivedKey": "d7edb33533738ed49db7f5ea5c4353e4f66df28338591e846888cb46caf2f936",
+        "reading": "329cc7f9c37b0018a2ff9fb005996a47580e57ba92e9f783e9c95881014cf489"
+      }
+    },
+    {
+      "file": "native-v3.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "open",
+      "envelope": "EMMA/2.0",
+      "payloadSchema": "emma-local-vault/3",
+      "readAs": "emma-local-vault/3",
+      "kind": "native",
+      "archiveVersion": 2,
+      "counts": {
+        "memories": 4,
+        "removed": 0,
+        "people": 0,
+        "identityDocuments": 0
+      },
+      "note": "Native export, archive version 2 (perspective, event date, voice). Node-made; checked against the Swift reader.",
+      "sha256": {
+        "file": "57c40d04f337968723e32f936213368270e01bf4b3e8c4a7a06f8b86f99803fb",
+        "plaintext": "9ab4ad1a2b0908b605f03149f25aba0779829649a059bc63fcee102178133775",
+        "derivedKey": "0ae0cc5a035e64ea467f77eb66a646abef504a7cb9a849b6c6fa3a1ce4a85c6e",
+        "reading": "a61fb9821d70907057b1b8be2b2d5f89aa1e183f3ea719549e2f533cf018b479"
+      }
+    },
+    {
+      "file": "native-v3-temporal.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "open",
+      "envelope": "EMMA/2.0",
+      "payloadSchema": "emma-local-vault/3",
+      "readAs": "emma-local-vault/3",
+      "kind": "native",
+      "archiveVersion": 3,
+      "counts": {
+        "memories": 2,
+        "removed": 0,
+        "people": 0,
+        "identityDocuments": 0
+      },
+      "note": "Native export, archive version 3 with a time-aware source row.",
+      "sha256": {
+        "file": "840f7e209026d86f8f632b717eb0843b8371bcadd17ccd543cedb77e6b44417e",
+        "plaintext": "ffc48f22f905135ac1af59cc924766b99a1aeea1dcee07df577467cc5c9cb3a9",
+        "derivedKey": "9754ebef665dbc6f5f45b78b1941dda7927598de82123f5e886a2fe992904fda",
+        "reading": "4fbf68fd41351e3f467b3a48fbc8c6d08444fe984f73a2b3b0340597d8ec1c51"
+      }
+    },
+    {
+      "file": "native-v4.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "open",
+      "envelope": "EMMA/2.0",
+      "payloadSchema": "emma-local-vault/4",
+      "readAs": "emma-local-vault/4",
+      "kind": "native",
+      "archiveVersion": 4,
+      "counts": {
+        "memories": 4,
+        "removed": 0,
+        "people": 2,
+        "identityDocuments": 0
+      },
+      "note": "Native export, archive version 4 with People.",
+      "sha256": {
+        "file": "ae3808a938562893e33e0a7a200196b97f212129a22dcd1c442a50b1bb6ff3be",
+        "plaintext": "ef7f6625607977fe4d644e6c6f7c47998834b9223254d10749433e9f85d98823",
+        "derivedKey": "e0dc2f8125b3daa025e782a37ae213d52acd306c6119bad09d270f9b80c588a6",
+        "reading": "70d8466234647df4897109d30bc41e204178379fd38d44b8dac59b251f1deb5f"
+      }
+    },
+    {
+      "file": "native-v5.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "open",
+      "envelope": "EMMA/2.0",
+      "payloadSchema": "emma-local-vault/5",
+      "readAs": "emma-local-vault/5",
+      "kind": "native",
+      "archiveVersion": 6,
+      "counts": {
+        "memories": 6,
+        "removed": 0,
+        "people": 2,
+        "identityDocuments": 0
+      },
+      "note": "Native export, archive version 6 with attribution (\"Written by Mira Fixture\", \"Written by family\").",
+      "sha256": {
+        "file": "713a10f3411da33ad5f3c0973f672845018202893aee62edf33a51a9bdee7f88",
+        "plaintext": "0743dee97086ed6bb066973a0464d13dcd1734155d5b9949d8a243c19deebed6",
+        "derivedKey": "472ca60fb587bf81798ffcd631c1d1520a681a54849c90c838c9d048ea52abfd",
+        "reading": "67d6ef357f041b95c4acee6b6b6fe18bce9a4d10339ec2be9b09dbba5d819761"
+      }
+    },
+    {
+      "file": "neg-flipped-tag.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "cannotUnlock",
+      "note": "Last byte of the GCM tag flipped.",
+      "sha256": {
+        "file": "3aaba5eff6c3b61d8a18edcaf468f93ff41272653a84cd5bcee9369a80092af9"
+      }
+    },
+    {
+      "file": "neg-flipped-header-salt.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "cannotUnlock",
+      "note": "First salt byte flipped: a different key and a failed AAD check.",
+      "sha256": {
+        "file": "c3f8b5727eb25e30dccad1d22e8a64d8341981cbae54e26b797631096f9e2186"
+      }
+    },
+    {
+      "file": "neg-flipped-header-nonce.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "cannotUnlock",
+      "note": "First nonce byte flipped.",
+      "sha256": {
+        "file": "3fadc02cb970bbc9098894f22ef6af5b28073c84962c0ddd0c018080ca2219d8"
+      }
+    },
+    {
+      "file": "neg-flipped-ciphertext.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "cannotUnlock",
+      "note": "A ciphertext byte flipped.",
+      "sha256": {
+        "file": "2a5c6be90150d9e36d091e41cb4e5389727401c0914ed587e5871b0586aa938c"
+      }
+    },
+    {
+      "file": "neg-truncated.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "cannotUnlock",
+      "note": "Last byte removed.",
+      "sha256": {
+        "file": "6d29e2847829205d812051ae92373c071cbe888749c4eaf617598f217c14a431"
+      }
+    },
+    {
+      "file": "neg-appended.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "cannotUnlock",
+      "note": "One byte appended.",
+      "sha256": {
+        "file": "2b1b692e7d93050a8953bc0d01e381e73e9b8f6861e01044bb61dd9cdb3d33a9"
+      }
+    },
+    {
+      "file": "neg-wrong-passphrase.emma",
+      "passphrase": "not-the-fixture-passphrase",
+      "expect": "cannotUnlock",
+      "note": "The web-v3 bytes with a different passphrase.",
+      "sha256": {
+        "file": "2d9152a0881d768da208880424f05d778e18275333bf1ecff27c55814045fbc4"
+      }
+    },
+    {
+      "file": "neg-truncated-short.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "notEmma",
+      "note": "Shorter than the smallest possible EMMA/2.0 file.",
+      "sha256": {
+        "file": "f70baefc6f1427856dc37d6a2f331cac30e6e64f8a29c99fd6a812d8133facec"
+      }
+    },
+    {
+      "file": "neg-wrong-iterations.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "notEmma",
+      "note": "Header says 100000 iterations. Refused before any key derivation.",
+      "sha256": {
+        "file": "5e5a2388147665652aa8319e041abafdfa25a2202e4c7f568a4efb5da0c1ce6a"
+      }
+    },
+    {
+      "file": "neg-wrong-version-3-0.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "notEmma",
+      "note": "Version bytes 03 00.",
+      "sha256": {
+        "file": "4e1f0fc8eccaf77f2d8147c92fedd0b93584161155c8623d87af3932a4aac90d"
+      }
+    },
+    {
+      "file": "neg-wrong-version-2-1.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "notEmma",
+      "note": "Version bytes 02 01.",
+      "sha256": {
+        "file": "ea89a67ef351847fbdf79eac1c53fdd8d72480518a89d727c8a6efe5fa55a894"
+      }
+    },
+    {
+      "file": "neg-wrong-magic.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "notEmma",
+      "note": "Magic bytes are not EMMA.",
+      "sha256": {
+        "file": "c1deb82ec164aacc03e1c62b2ef5b9066fdf49b36fc7a047aecd5382304997fd"
+      }
+    },
+    {
+      "file": "neg-heirloom-like.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "notEmma",
+      "note": "A legacy-mode (heirloom) file is JSON text, not an EMMA envelope. v0.2 scope.",
+      "sha256": {
+        "file": "1d835736ecfa411a79ecb4f1cbca817ef11fb6f905d2098dce2af0245a0e15f4"
+      }
+    },
+    {
+      "file": "neg-duplicate-keys.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Duplicate JSON object key \"name\".",
+      "sha256": {
+        "file": "84d41a69df534593ff3ea00834ea192e6cccd0a5378a3c883e229cd77d874868",
+        "plaintext": "e050dc1b6f28df95ec74ad1b65c5a1a30ea182008e30b6a141703de898a7a47b",
+        "derivedKey": "3deda03d5442ef4c39583601c6a4f25bda22f5b8aca4aa6f16e8a3a76fd0d29f"
+      }
+    },
+    {
+      "file": "neg-unknown-schema.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Unknown payload schema.",
+      "sha256": {
+        "file": "cf4b4194cc60d90407f2bd68a09f7195e47b0782c21c390d1538370d4ed21b3f",
+        "plaintext": "b84cf4d9a68ff559c0091fb37c8668d0c28ca3f0b61b3a97aaebfd27b74f7c42",
+        "derivedKey": "cff5e18e4c4f5c49ea8466a4765c6197a73348735d6a8d5bcbe417035dfda30e"
+      }
+    },
+    {
+      "file": "neg-device-backup-like.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Device backup schema.",
+      "sha256": {
+        "file": "14b23cb4d39e9c555be1b30374ef0db60803cad805b3225cceadcffa8825fbc2",
+        "plaintext": "d1cdc43513cfa9cedfcb77bfc2b61054b75eea667ef353603441e4825968dc3d",
+        "derivedKey": "f9b2a970b0ca1fd98be2b0090a1f8f0d86079dfb3ec811d34b147effe73220af"
+      }
+    },
+    {
+      "file": "neg-capsule-like.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Experience capsule schema.",
+      "sha256": {
+        "file": "4cd6a9c8ad4279114452c4676e808d11c5ac0e8c5e05dac16e3b47de7ac6e5ab",
+        "plaintext": "38d8ace13a52be57f28c02a901afbefb0fa1969f718783fdf86f3e884206ca5b",
+        "derivedKey": "0c7b0c9c6c32a91bea64900a9c8861e375eb31b0a451b0d4826503b6af8ff5e0"
+      }
+    },
+    {
+      "file": "neg-reviewed-record-like.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Reviewed record schema.",
+      "sha256": {
+        "file": "a449a64174ea2907e3e949f143601350a73aeb0b8335d324292ccd8e44e30756",
+        "plaintext": "9c41d287682da3cceb9426a150441d7e6e223221e00b15d86164f2705b74d262",
+        "derivedKey": "06df09ad814cb7ee64e56ad1df5326d856a0286668f5612762fecfa1849937b6"
+      }
+    },
+    {
+      "file": "neg-not-json.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Authenticated plaintext that is not JSON.",
+      "sha256": {
+        "file": "8bc2c35889e8474daa462c33a53e0d8fe2ba28420669c8e11dae9f36e11d4e61",
+        "plaintext": "c22205acda22696001749b5bef0831db4e6f6a5d239c93e17d25424c94baedb9",
+        "derivedKey": "9d1304fa589ec34dfba7c44af304811ba3359b4b5f80b7467db952657c49cf71"
+      }
+    },
+    {
+      "file": "neg-invalid-utf8.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Authenticated plaintext that is not UTF-8.",
+      "sha256": {
+        "file": "36c22e8630f46cd8a5b666877d2d6b163b3ccbd7b51242f5af446f6d556337ab",
+        "plaintext": "aa0a999801498f5f39ea622ab0b1a680e1d84658e0890b182b3feb9fee1d72ce",
+        "derivedKey": "a9ed8631954ed12a2931dc4dd25d58d9aad8467de499fd621980931ab8fbd8f1"
+      }
+    },
+    {
+      "file": "neg-v4-without-native.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Payload /4 without content.nativeMemory.",
+      "sha256": {
+        "file": "8828dfc2855e7d4806f7863a1c14f5fd9502cc41a1ceed31939211c2a20c0825",
+        "plaintext": "d580c9eb7baa6b8aed092250299c4ed08f635c6222d5463363c3870a052fadd7",
+        "derivedKey": "d18aed6008fb92e4c8d1199206cec0dabdae26ba9d7b81e5b19d51e25eef5432"
+      }
+    },
+    {
+      "file": "neg-v5-without-native.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Payload /5 without content.nativeMemory.",
+      "sha256": {
+        "file": "8fb2a84684bfc4212e3f07f01197826f66953851bc0319247162f000a138d997",
+        "plaintext": "9fb5e071cb7181759b6afa5d3729b4bc7c8a7467f2dd619a931adfe1bdd03231",
+        "derivedKey": "6012fbe8adf65b7fa637bb9233b726836dcc4466b2f0ac946925817ffa47db96"
+      }
+    },
+    {
+      "file": "neg-native-mirror-edited.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Browser mirror no longer matches the native archive.",
+      "sha256": {
+        "file": "892c67a2875fdc5b0db73f2884b1af8005cefba4fa0b416c2bea2158af22d731",
+        "plaintext": "9512d106205609f5bb35d97dc1c935ca8f76143e17ff3dcd2b54ba4dce595aac",
+        "derivedKey": "5e65599f7c7e9c0243983bf2ae44fe7edfa3758dc8a583dd7319cfd3048d9793"
+      }
+    },
+    {
+      "file": "neg-native-schema-mismatch.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "nativeMemory.schema does not match the archive version.",
+      "sha256": {
+        "file": "9905d1b4385c91a043df0c41d4bc734db8444c0888598ad8d1cc79572a61b239",
+        "plaintext": "9ed03f5bdabca7ec96d8c2a7d4a4339ca5226b151c8e757f8001829f9beaae6b",
+        "derivedKey": "540dadd14824c8f530f88840d5f3b4e384ea51739825b799aca026811beb3437"
+      }
+    },
+    {
+      "file": "neg-native-extra-settings.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Settings added beside a native archive: a limited reader must not drop them silently.",
+      "sha256": {
+        "file": "165037eb0412b91b739abe5b95f8e948e64c99a1c7b0fd8f792899b79fcf6b82",
+        "plaintext": "c5ad6c8f802263e31f2d0f093f39647bff84e2c7520ec2daad065ceadd88b980",
+        "derivedKey": "de2a2dd2b661b5d1ee60898cec34d1830a35149d3b8acc0b67ccf3ad2e332c3d"
+      }
+    },
+    {
+      "file": "neg-native-archive-v5.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Archive version 5 (voice) is never accepted in a memory vault.",
+      "sha256": {
+        "file": "14021d962b5e44c63011e94d753a6002834a416091c5f39a7598987b98364356",
+        "plaintext": "cf0a50e049acf957b1dd304cb9b5b38d64c2a7256db89cb241b8386b2a24479a",
+        "derivedKey": "daa243eb99df8e6136cbce893ae0313007cb328c1318a6f80ae200d769c75944"
+      }
+    },
+    {
+      "file": "neg-web-oversize-text.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Memory text over the 200,000 code unit bound.",
+      "sha256": {
+        "file": "bae9c47aaa2f5cb18872726b7c90c6b22f561f9ebc4c6b61c052f3fb67b4ce36",
+        "plaintext": "55e4455ef42a94c959ee6fc3ee9ca10c471bae8ac543b7a415c1bb610bdfdd9d",
+        "derivedKey": "1cedc487bf09d6c58807af5da5aed0c62d4714d0feafdcea9cf90c67d2ecf6db"
+      }
+    },
+    {
+      "file": "neg-web-too-many-attachments.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Nine attachments on one memory.",
+      "sha256": {
+        "file": "5563a0f6f10801537cf927b23a13fad5653761f597601cacf147c507d7e09f10",
+        "plaintext": "41275a7d493387df6b3577b02a935281f975809cb0afd7e490d415d234872f7c",
+        "derivedKey": "ce80b47ed7434c246d873b1f838c092e9f33bcc99e94a369a0899cada71b9baa"
+      }
+    },
+    {
+      "file": "neg-web-bad-attachment-type.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "An attachment type outside the image, audio and video allowlist.",
+      "sha256": {
+        "file": "d3a26395212c76626d838605775d32c2ed05dc494e4404cc880614620de0934d",
+        "plaintext": "918c7270b6646ab49ff4520e1dc06f5cb4c2f91f77091afb2aa296dda086132e",
+        "derivedKey": "b93874e38c7bf7139ff5efadb32bf0b04a6c4b9ec1be1605aecac4007f7dc6cb"
+      }
+    },
+    {
+      "file": "neg-deep-nesting.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Nesting deeper than 50 levels.",
+      "sha256": {
+        "file": "955ef2148f5d5e47db832f1cac8ceacf7c66999ae65fb358a2ddf0b7c4008731",
+        "plaintext": "94efc70c7d1014cd6517b909a1e844efcf29b04e1c9edfeda594a51308f38387",
+        "derivedKey": "dbeb7622956f2727b799793463bb08f9e3084fab481852a2aa9db86b56eb2eeb"
+      }
+    },
+    {
+      "file": "neg-unsafe-key.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "An unsafe object key.",
+      "sha256": {
+        "file": "3762a8ef7a772d2b2405fb54143b94a10d3651dfe7c2f6c6a445e03ce22af4e3",
+        "plaintext": "38e197fa98d8044b7f1ca3b84e46079491b069ce65a706d9c062a593dba0a2a6",
+        "derivedKey": "2b935eb9cefe72bbcb0253927749a25dcd48a859242f6a1e2b38c127e4e04dfc"
+      }
+    },
+    {
+      "file": "neg-identity-schema.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/2.0",
+      "note": "Unsupported identity document extension version.",
+      "sha256": {
+        "file": "e350056d2cc0867a3d75756570b4c0474f425fe3e4131a24044c269db0dfd327",
+        "plaintext": "e7d82d7a6f0a19d3536d3435942675a26ccf02d969c5320e89babac029594905",
+        "derivedKey": "ceef115924c0e7c7b21fc963ac128749b9702baf0b00a885ca825de485578c67"
+      }
+    },
+    {
+      "file": "neg-legacy-bad-structure.emma",
+      "passphrase": "lantern-notebook-fixture",
+      "expect": "unsupported",
+      "envelope": "EMMA/1.0",
+      "note": "EMMA 1.0 without content.memories.",
+      "sha256": {
+        "file": "5fe478a16f5585b599e6f1c4856c6b6f58848f07231ba4ddc0881cc1cca1b172",
+        "plaintext": "1f1d443f0a0361fd31e8617dfd843214239ffe1708ef3d7a2aea0764a55273be",
+        "derivedKey": "6a65db3d3e7848e0992cc6d54c08e128baa121f8afed6f85ae0d7eb9d78a40ab"
+      }
+    }
+  ]
+}

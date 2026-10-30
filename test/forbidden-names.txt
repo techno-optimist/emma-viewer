@@ -1,0 +1,6 @@
+# One token per line. The gate test fails if any appears, case-insensitively,
+# in the viewer, the spec, the fixtures, the tools or the tests. Real names
+# and machine paths never belong in this repository's test material.
+Kevin
+Russell
+/Users/

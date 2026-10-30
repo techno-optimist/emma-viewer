@@ -1,0 +1,23 @@
+{
+  "name": "emma-viewer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open-source offline reader for .emma files. One HTML file, Web Crypto only.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/",
+    "test:browser": "node --test test/browser.test.mjs",
+    "fixtures": "node tools/make-fixtures.mjs",
+    "fixtures:check": "node tools/make-fixtures.mjs --check",
+    "readings": "node tools/record-readings.mjs",
+    "csp": "node tools/csp-hash.mjs --write",
+    "sums": "node tools/sha256sums.mjs --write"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.1"
+  }
+}

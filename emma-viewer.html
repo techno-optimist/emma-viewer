@@ -1,0 +1,1134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-FpGR3fFxJTQ2En+QWqOMEw4Q0tkPw2xHLLq9Zujg9wg='; style-src 'sha256-teZsfMNLI8vhFx1C7ydwJnegq4hx7vmiM0vRphNAXgU='; img-src blob: data:; media-src blob:; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:,">
+<title>emma viewer</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --paper: #fbfaf7; --ink: #1d1c1a; --soft: #5f5b54; --line: #d9d4ca; --card: #ffffff;
+  --accent: #2f5f8f; --accent-ink: #ffffff; --warn-bg: #fff4d6; --warn-ink: #5a4300; --error-bg: #fde8e4; --error-ink: #7a2114;
+  --pill: #eeeae2; --focus: #ff9d2e;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #17191c; --ink: #ecebe6; --soft: #a8a49b; --line: #3a3e45; --card: #20242a;
+    --accent: #8fb6dc; --accent-ink: #0f1a26; --warn-bg: #3a3010; --warn-ink: #ffe7a6; --error-bg: #4a1a14; --error-ink: #ffd4cc;
+    --pill: #2b3038;
+  }
+}
+* { box-sizing: border-box; }
+html { background: var(--paper); color: var(--ink); }
+body {
+  margin: 0; padding: 0 16px 48px;
+  font: 18px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+  max-width: 860px; margin-inline: auto;
+}
+h1 { font-size: 1.6rem; margin: 28px 0 4px; }
+h2 { font-size: 1.25rem; margin: 32px 0 12px; }
+h3 { font-size: 1.1rem; margin: 0 0 8px; }
+p { margin: 0 0 12px; }
+.muted { color: var(--soft); }
+.small { font-size: 0.9rem; }
+header p { margin-bottom: 20px; }
+section.panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin: 16px 0; }
+.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+button, .filebutton {
+  font: inherit; font-weight: 600; padding: 12px 20px; border-radius: 10px; cursor: pointer;
+  border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink);
+}
+button.secondary, .filebutton.secondary { background: transparent; color: var(--accent); }
+button:disabled { opacity: 0.5; cursor: default; }
+button:focus-visible, .filebutton:focus-within, input:focus-visible, summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.filebutton { display: inline-block; position: relative; overflow: hidden; }
+.filebutton input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; font-size: 1rem; }
+label.field { display: block; margin: 12px 0 6px; font-weight: 600; }
+input[type="password"], input[type="text"] {
+  font: inherit; width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink);
+}
+dl.facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0 0 12px; }
+dl.facts dt { color: var(--soft); }
+dl.facts dd { margin: 0; overflow-wrap: anywhere; }
+.notice { background: var(--warn-bg); color: var(--warn-ink); border-radius: 10px; padding: 12px 16px; margin: 12px 0; }
+.error { background: var(--error-bg); color: var(--error-ink); border-radius: 10px; padding: 12px 16px; margin: 12px 0; font-weight: 600; }
+.progress { color: var(--soft); margin: 12px 0; }
+article.memory { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin: 14px 0; }
+article.memory .text { white-space: pre-wrap; overflow-wrap: anywhere; margin: 12px 0 0; font-size: 1.05rem; }
+article.memory .meta { color: var(--soft); font-size: 0.92rem; }
+article.memory .meta div { margin: 2px 0; overflow-wrap: anywhere; }
+.labels { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 0; }
+.pill { background: var(--pill); border-radius: 999px; padding: 2px 12px; font-size: 0.85rem; }
+.pill.someday { border: 1px solid var(--line); }
+.attachments { margin: 12px 0 0; display: grid; gap: 10px; }
+.attachments figure { margin: 0; }
+.attachments figcaption { color: var(--soft); font-size: 0.85rem; margin-top: 4px; overflow-wrap: anywhere; }
+.attachments img, .attachments video { max-width: 100%; max-height: 420px; border-radius: 8px; border: 1px solid var(--line); display: block; }
+.attachments audio { width: 100%; }
+details { margin: 16px 0; }
+summary { cursor: pointer; font-weight: 600; font-size: 1.1rem; padding: 8px 0; }
+ul.plain { list-style: none; padding: 0; margin: 0; }
+ul.plain li { padding: 8px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.document .text { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin: 8px 0; }
+footer { margin-top: 48px; color: var(--soft); font-size: 0.9rem; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<header>
+  <h1>emma viewer</h1>
+  <p class="muted">Reads one <strong>.emma</strong> file on this computer. It sends nothing anywhere and never changes the file.</p>
+</header>
+<main id="app">
+  <section class="panel" id="pick-panel">
+    <h2 class="visually-hidden">Choose a file</h2>
+    <div class="row">
+      <label class="filebutton">Choose a .emma file<input type="file" id="file-input" accept=".emma,application/octet-stream"></label>
+      <span class="muted small">Nothing leaves this computer.</span>
+    </div>
+    <p class="error" id="file-error" hidden></p>
+  </section>
+
+  <section class="panel" id="facts-panel" hidden>
+    <h2>About this file</h2>
+    <dl class="facts">
+      <dt>Name</dt><dd id="fact-name"></dd>
+      <dt>Size</dt><dd id="fact-size"></dd>
+      <dt>Format</dt><dd id="fact-format"></dd>
+      <dt>SHA-256</dt><dd id="fact-sha" class="small"></dd>
+    </dl>
+    <p class="muted small">What is inside stays hidden until the passphrase unlocks it.</p>
+    <div id="unlock-form">
+      <label class="field" for="passphrase">Passphrase</label>
+      <input type="password" id="passphrase" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="1024">
+      <p class="muted small">Spaces, capitals and accents count exactly as they were typed when the file was made.</p>
+      <div class="row">
+        <button id="unlock-button" type="button" disabled>Unlock</button>
+        <button id="show-passphrase" type="button" class="secondary">Show passphrase</button>
+      </div>
+      <p class="progress" id="progress" hidden></p>
+      <p class="error" id="unlock-error" hidden></p>
+    </div>
+  </section>
+
+  <section id="vault-panel" hidden>
+    <section class="panel">
+      <h2 id="vault-name"></h2>
+      <dl class="facts">
+        <dt>Contents</dt><dd id="vault-format"></dd>
+        <dt>Vault ID</dt><dd id="vault-id" class="small"></dd>
+        <dt>Created</dt><dd id="vault-created"></dd>
+        <dt>Updated</dt><dd id="vault-updated"></dd>
+        <dt>Memories</dt><dd id="vault-counts"></dd>
+      </dl>
+      <div id="notices"></div>
+      <div class="row">
+        <button id="export-button" type="button" class="secondary">Save a plain copy</button>
+        <button id="close-button" type="button" class="secondary">Close file</button>
+      </div>
+      <p class="muted small">A plain copy makes two unencrypted files on this computer, <strong>vault.json</strong> and <strong>memories.md</strong>. Keep them as carefully as the passphrase.</p>
+    </section>
+    <h2 id="memories-heading">Memories</h2>
+    <div id="memories"></div>
+    <details id="removed-section" hidden>
+      <summary id="removed-summary">Removed by the owner</summary>
+      <p class="muted small">The owner moved these to Trash. They were kept in the file, not erased.</p>
+      <div id="removed"></div>
+    </details>
+    <section id="people-section" hidden>
+      <h2>People</h2>
+      <ul class="plain" id="people"></ul>
+    </section>
+    <section id="documents-section" hidden>
+      <h2>Identity documents</h2>
+      <p class="muted small">Text documents the owner kept and reviewed. Shown read-only, exactly as written.</p>
+      <div id="documents"></div>
+    </section>
+  </section>
+</main>
+<footer>
+  <p>emma viewer 0.1. Opening a file does not make anyone its owner or heir. The words inside may include other people's private information. Nobody can recover a lost passphrase.</p>
+</footer>
+<script>
+'use strict';
+// emma viewer 0.1: a single-file, offline reader for .emma files.
+// Web Crypto only. No network, no storage, no clipboard. Text is set with textContent only.
+// The pure part (EmmaViewer) has no DOM access, so tests can run it in Node.
+const EmmaViewer = (() => {
+  const ERRORS = Object.freeze({
+    notEmma: 'This is not a file this viewer can open.',
+    unreadable: 'The file could not be read from this computer.',
+    cannotUnlock: 'Cannot unlock: wrong passphrase or damaged file.',
+    unsupported: 'The file unlocked, but its contents are not in a form this viewer understands, so nothing is shown.'
+  });
+  class ViewerError extends Error {
+    constructor(code) { super(ERRORS[code]); this.code = code; }
+  }
+  const MAX_VAULT_BYTES = 20 * 1024 * 1024;
+  const MAX_FILE_BYTES = MAX_VAULT_BYTES + 70;
+  const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
+  const ITERATIONS = 600000;
+  const LEGACY_ITERATIONS = 100000;
+  const MEDIA_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'audio/wav', 'audio/x-wav', 'audio/mpeg', 'audio/ogg', 'audio/webm', 'video/mp4']);
+  const NATIVE_LEGACY_PAYLOAD_BYTES = 131072;
+  const NATIVE_FAMILY_PAYLOAD_BYTES = 4194304;
+  const REFERENCE_DATE_OFFSET = 978307200;
+  const encoder = new TextEncoder();
+  const fatalDecoder = new TextDecoder('utf-8', { fatal: true });
+  const has = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
+  const refuse = () => { throw new ViewerError('unsupported'); };
+  const need = condition => { if (!condition) refuse(); };
+  const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+  const isString = value => typeof value === 'string';
+
+  // ------------------------------------------------------------ envelope ----
+  // EMMA/2.0: "EMMA" 02 00, uint32 iterations, 32 salt, 12 nonce, then
+  // ciphertext and a 16-byte tag. The 54 header bytes are the AAD.
+  // EMMA/1.0 (legacy): "EMMA" 01 00, 32 salt at 6, 12 nonce at 38, ciphertext
+  // at 50, 100000 iterations, no AAD. Its header is not authenticated.
+  function toBytes(input) {
+    if (input instanceof Uint8Array) return input;
+    if (ArrayBuffer.isView(input)) return new Uint8Array(input.buffer, input.byteOffset, input.byteLength);
+    if (Object.prototype.toString.call(input) === '[object ArrayBuffer]') return new Uint8Array(input);
+    throw new ViewerError('notEmma');
+  }
+  function inspect(input) {
+    const bytes = toBytes(input);
+    if (bytes.length > MAX_FILE_BYTES || bytes.length < 66) throw new ViewerError('notEmma');
+    if (bytes[0] !== 0x45 || bytes[1] !== 0x4d || bytes[2] !== 0x4d || bytes[3] !== 0x41) throw new ViewerError('notEmma');
+    const major = bytes[4], minor = bytes[5];
+    if (minor !== 0 || (major !== 1 && major !== 2)) throw new ViewerError('notEmma');
+    if (major === 1) return { envelope: 'EMMA/1.0', iterations: LEGACY_ITERATIONS, size: bytes.length, legacy: true };
+    if (bytes.length < 70) throw new ViewerError('notEmma');
+    const iterations = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength).getUint32(6, false);
+    if (iterations !== ITERATIONS) throw new ViewerError('notEmma');
+    return { envelope: 'EMMA/2.0', iterations, size: bytes.length, legacy: false };
+  }
+  function validPassphrase(passphrase) {
+    return isString(passphrase) && passphrase.length >= 1 && passphrase.length <= 1024;
+  }
+  async function deriveKey(passphrase, salt, iterations) {
+    const material = encoder.encode(passphrase);
+    let imported;
+    try { imported = await crypto.subtle.importKey('raw', material, 'PBKDF2', false, ['deriveKey']); }
+    finally { material.fill(0); }
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations }, imported, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+  }
+  // Returns the authenticated plaintext bytes. Nothing is parsed here.
+  async function unlock(input, passphrase, onProgress) {
+    const bytes = toBytes(input);
+    const facts = inspect(bytes);
+    if (!validPassphrase(passphrase)) throw new ViewerError('cannotUnlock');
+    let salt, iv, ciphertext, additionalData = null;
+    if (facts.legacy) { salt = bytes.slice(6, 38); iv = bytes.slice(38, 50); ciphertext = bytes.slice(50); }
+    else { salt = bytes.slice(10, 42); iv = bytes.slice(42, 54); ciphertext = bytes.slice(54); additionalData = bytes.slice(0, 54); }
+    if (onProgress) await onProgress('deriving');
+    const key = await deriveKey(passphrase, salt, facts.iterations);
+    if (onProgress) await onProgress('decrypting');
+    const algorithm = { name: 'AES-GCM', iv, tagLength: 128 };
+    if (additionalData) algorithm.additionalData = additionalData;
+    let plaintext;
+    try { plaintext = new Uint8Array(await crypto.subtle.decrypt(algorithm, key, ciphertext)); }
+    catch (error) { throw new ViewerError('cannotUnlock'); }
+    if (plaintext.length > MAX_VAULT_BYTES) { plaintext.fill(0); refuse(); }
+    return { plaintext, facts };
+  }
+
+  // -------------------------------------------------------- strict JSON ----
+  // A small JSON parser that refuses duplicate object keys, unsafe keys,
+  // non-finite numbers and nesting deeper than 51 levels. Parser errors never
+  // carry text from the file: every failure is the same refusal.
+  const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+  function parseStrictJSON(text) {
+    let index = 0, maxDepth = 0;
+    const length = text.length;
+    const skip = () => { while (index < length) { const c = text.charCodeAt(index); if (c === 32 || c === 9 || c === 10 || c === 13) index += 1; else break; } };
+    const expect = char => { need(text[index] === char); index += 1; };
+    function value(depth) {
+      skip(); need(index < length);
+      const c = text[index];
+      if (c === '{') return object(depth + 1);
+      if (c === '[') return array(depth + 1);
+      if (c === '"') return string();
+      if (c === 't') { need(text.startsWith('true', index)); index += 4; return true; }
+      if (c === 'f') { need(text.startsWith('false', index)); index += 5; return false; }
+      if (c === 'n') { need(text.startsWith('null', index)); index += 4; return null; }
+      return number();
+    }
+    function object(depth) {
+      need(depth <= 51); if (depth > maxDepth) maxDepth = depth;
+      expect('{'); const result = {}; const seen = new Set();
+      skip();
+      if (text[index] === '}') { index += 1; return result; }
+      for (;;) {
+        skip(); need(text[index] === '"');
+        const key = string();
+        need(!seen.has(key) && !UNSAFE_KEYS.has(key)); seen.add(key);
+        skip(); expect(':');
+        result[key] = value(depth);
+        skip();
+        if (text[index] === ',') { index += 1; continue; }
+        expect('}'); return result;
+      }
+    }
+    function array(depth) {
+      need(depth <= 51); if (depth > maxDepth) maxDepth = depth;
+      expect('['); const result = [];
+      skip();
+      if (text[index] === ']') { index += 1; return result; }
+      for (;;) {
+        result.push(value(depth));
+        skip();
+        if (text[index] === ',') { index += 1; continue; }
+        expect(']'); return result;
+      }
+    }
+    function string() {
+      expect('"'); let result = ''; let start = index;
+      for (;;) {
+        need(index < length);
+        const c = text.charCodeAt(index);
+        if (c === 34) { result += text.slice(start, index); index += 1; return result; }
+        if (c < 32) refuse();
+        if (c === 92) {
+          result += text.slice(start, index); index += 1; need(index < length);
+          const e = text[index]; index += 1;
+          if (e === '"') result += '"'; else if (e === '\\') result += '\\'; else if (e === '/') result += '/';
+          else if (e === 'b') result += '\b'; else if (e === 'f') result += '\f'; else if (e === 'n') result += '\n';
+          else if (e === 'r') result += '\r'; else if (e === 't') result += '\t';
+          else if (e === 'u') {
+            const hex = text.slice(index, index + 4); need(/^[0-9a-fA-F]{4}$/.test(hex));
+            result += String.fromCharCode(parseInt(hex, 16)); index += 4;
+          } else refuse();
+          start = index;
+        } else index += 1;
+      }
+    }
+    function number() {
+      const match = /^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?/.exec(text.slice(index, index + 400));
+      need(match);
+      index += match[0].length;
+      const result = Number(match[0]);
+      need(Number.isFinite(result));
+      return result;
+    }
+    const result = value(0);
+    skip(); need(index === length);
+    return { value: result, maxDepth };
+  }
+
+  // ----------------------------------------------------------- helpers ----
+  function utf8Length(text) { return encoder.encode(text).length; }
+  function wellFormed(text) {
+    for (let i = 0; i < text.length; i += 1) {
+      const c = text.charCodeAt(i);
+      if (c >= 0xd800 && c <= 0xdbff) { const next = text.charCodeAt(i + 1); if (!(next >= 0xdc00 && next <= 0xdfff)) return false; i += 1; }
+      else if (c >= 0xdc00 && c <= 0xdfff) return false;
+    }
+    return true;
+  }
+  const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+  const isUUID = value => isString(value) && UUID.test(value);
+  function isCalendarDate(value) {
+    if (!isString(value) || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+    const year = Number(value.slice(0, 4)), month = Number(value.slice(5, 7)), day = Number(value.slice(8, 10));
+    if (year < 1 || month < 1 || month > 12) return false;
+    const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+    const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    return day >= 1 && day <= days[month - 1];
+  }
+  const EXACT_ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+  const isExactISO = value => isString(value) && EXACT_ISO.test(value) && Number.isFinite(Date.parse(value)) && new Date(value).toISOString() === value;
+  function referenceSecondsToISO(seconds) { return new Date(Math.round((seconds + REFERENCE_DATE_OFFSET) * 1000)).toISOString(); }
+  function sortedKeysJSON(value) {
+    if (Array.isArray(value)) return '[' + value.map(sortedKeysJSON).join(',') + ']';
+    if (isObject(value)) return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + sortedKeysJSON(value[key])).join(',') + '}';
+    return JSON.stringify(value);
+  }
+  function decodeBase64(data) {
+    const binary = atob(data);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+    return bytes;
+  }
+
+  // ------------------------------------------------ web vault (vault.js) ----
+  // A read-only port of the validation in emma's web reader, vault.js. Defaults follow
+  // that reader: a missing memory date becomes the vault's updated date, a
+  // missing source is "Written in Emma", a missing consent is "unknown".
+  function text(value, max, fallback) {
+    const result = value === undefined ? fallback : value;
+    need(isString(result) && result.length <= max);
+    return result;
+  }
+  function timestamp(value, fallback) {
+    const result = value === undefined ? fallback : value;
+    need(isString(result) && result.length <= 40 && Number.isFinite(Date.parse(result)));
+    return new Date(result).toISOString();
+  }
+  function list(value) {
+    const result = value === undefined ? [] : value;
+    need(Array.isArray(result) && result.length <= 100);
+    const seen = [];
+    for (const item of result) { const name = text(item, 200); if (name && !seen.includes(name)) seen.push(name); }
+    return seen;
+  }
+  function documentDate(value) {
+    const result = text(value, 10);
+    const parts = /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/.exec(result);
+    need(parts && Number(parts[1]) > 0);
+    if (parts[2] !== undefined) need(Number(parts[2]) >= 1 && Number(parts[2]) <= 12);
+    if (parts[3] !== undefined) need(isCalendarDate(result));
+    return result;
+  }
+  function sourceRecord(value, now) {
+    const record = value === undefined ? {} : value;
+    need(isObject(record));
+    const kind = record.kind === undefined ? 'manual' : record.kind;
+    need(['manual', 'import', 'legacy'].includes(kind));
+    const result = { kind, reference: text(record.reference, 1000, 'Written in Emma'), creator: text(record.creator, 200, 'Not recorded'), capturedAt: timestamp(record.capturedAt, now) };
+    if (record.documentDate !== undefined) result.documentDate = documentDate(record.documentDate);
+    if (record.version !== undefined) { result.version = text(record.version, 100); need(result.version.trim()); }
+    if (record.evidenceKind !== undefined) { need(['observation', 'inference'].includes(record.evidenceKind)); result.evidenceKind = record.evidenceKind; }
+    if (record.confidence !== undefined) { need(['unknown', 'low', 'medium', 'high'].includes(record.confidence)); result.confidence = record.confidence; }
+    if (record.originalRefs !== undefined) {
+      need(Array.isArray(record.originalRefs) && record.originalRefs.length <= 8);
+      result.originalRefs = record.originalRefs.map(item => { const ref = text(item, 139); need(/^(?:document|transcript|media):[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(ref)); return ref; });
+    }
+    return result;
+  }
+  function consentRecord(value, now) {
+    const record = value === undefined ? {} : value;
+    need(isObject(record));
+    const status = record.status === undefined ? 'unknown' : record.status;
+    need(['unknown', 'granted', 'withdrawn'].includes(status));
+    const by = text(record.by, 200, '');
+    need(status !== 'granted' || by.trim().length > 0);
+    return { status, by, note: text(record.note, 2000, ''), recordedAt: timestamp(record.recordedAt, now) };
+  }
+  function attachment(value) {
+    need(isObject(value));
+    const name = text(value.name, 250, '');
+    need(name.length > 0 && MEDIA_TYPES.has(value.type));
+    const data = text(value.data, Math.ceil(MAX_ATTACHMENT_BYTES / 3) * 4, '');
+    const padding = data.endsWith('==') ? 2 : data.endsWith('=') ? 1 : 0;
+    const length = data.length - padding;
+    need(data.length % 4 === 0);
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    for (let i = 0; i < length; i += 1) need(alphabet.includes(data[i]));
+    need(!padding || length >= 2);
+    if (padding) need(alphabet.indexOf(data[length - 1]) % (padding === 2 ? 16 : 4) === 0);
+    const size = data.length * 3 / 4 - padding;
+    need(size > 0 && size <= MAX_ATTACHMENT_BYTES);
+    return { name, type: value.type, size, data };
+  }
+  function webMemory(value, id, now) {
+    need(isObject(value));
+    need(isString(id) && id.length > 0 && id.length <= 200 && !UNSAFE_KEYS.has(id));
+    need(value.id === id);
+    const content = text(value.content, 200000, '');
+    const attachments = value.attachments === undefined ? [] : value.attachments;
+    need(Array.isArray(attachments) && attachments.length <= 8);
+    need(content.trim() || attachments.length);
+    return {
+      id, title: text(value.title, 250, content.slice(0, 80) || 'A memory'), content,
+      created: timestamp(value.created, now), updated: timestamp(value.updated, now),
+      trashedAt: value.trashedAt == null ? null : timestamp(value.trashedAt),
+      source: sourceRecord(value.source, now), consent: consentRecord(value.consent, now),
+      people: list(value.people), tags: list(value.tags), attachments: attachments.map(attachment)
+    };
+  }
+  // Identity documents extension (emma-identity-documents/1), read-only port.
+  const IDENTITY_KINDS = new Set(['portrait', 'profile', 'horizon', 'reflection', 'soul', 'other']);
+  function identityText(value, max, allowEmpty) {
+    need(isString(value) && value.length <= max && (allowEmpty || value.trim()) && wellFormed(value));
+    return value;
+  }
+  function identityId(value) { identityText(value, 128); need(/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(value) && !UNSAFE_KEYS.has(value)); return value; }
+  function identityTimestamp(value) { identityText(value, 40); need(Number.isFinite(Date.parse(value)) && new Date(value).toISOString() === value); return value; }
+  function identityKindForFilename(name) {
+    const basename = isString(name) ? name.split(/[\\/]/).pop().toLowerCase() : '';
+    if (basename === 'soul.md') return 'soul';
+    const base = basename.replace(/\.(md|markdown|txt)$/, '');
+    if (base === 'agent' || base === 'digital_twin') return 'profile';
+    return ['profile', 'portrait', 'horizon', 'reflection'].includes(base) ? base : 'other';
+  }
+  function identityScope(value) {
+    need(isObject(value) && ['private', 'project', 'public'].includes(value.mode));
+    need(Object.keys(value).every(key => ['mode', 'projectId'].includes(key)));
+    if (value.mode === 'project') identityId(value.projectId); else need(value.projectId === undefined);
+    return { mode: value.mode, projectId: value.projectId };
+  }
+  function identityProvenance(value, kind) {
+    need(isObject(value));
+    identityText(value.reference, 1000); identityText(value.creator, 200); identityText(value.originalName, 250); identityTimestamp(value.capturedAt);
+    if (kind === 'soul') need(identityKindForFilename(value.originalName) === 'soul');
+    return { reference: value.reference, creator: value.creator, originalName: value.originalName, capturedAt: value.capturedAt };
+  }
+  function identityEndorsements(version, kind) {
+    if (version.horizonEndorsements === undefined) return [];
+    const events = version.horizonEndorsements;
+    need(kind === 'horizon' && Array.isArray(events) && events.length > 0 && events.length <= 32);
+    const seen = new Set(); let previousAt = -Infinity, previousStatus = 'revoked';
+    const result = [];
+    for (const event of events) {
+      need(isObject(event) && Object.keys(event).length === 5 && ['id', 'versionId', 'status', 'by', 'at'].every(key => has(event, key)));
+      identityId(event.id); need(!seen.has(event.id)); seen.add(event.id);
+      need(event.versionId === version.id);
+      need(['endorsed', 'revoked'].includes(event.status) && event.status !== previousStatus);
+      identityText(event.by, 200); identityTimestamp(event.at);
+      need(Date.parse(event.at) >= Date.parse(version.createdAt) && Date.parse(event.at) >= previousAt);
+      previousAt = Date.parse(event.at); previousStatus = event.status;
+      result.push({ status: event.status, by: event.by, at: event.at });
+    }
+    return result;
+  }
+  function depthOf(value) {
+    if (!(Array.isArray(value) || isObject(value))) return 0;
+    let deepest = 0;
+    for (const key of Object.keys(value)) { const depth = depthOf(value[key]); if (depth > deepest) deepest = depth; }
+    return deepest + 1;
+  }
+  function identityDocuments(value) {
+    need(isObject(value) && value.schema === 'emma-identity-documents/1' && isObject(value.documents));
+    // The web reader walks this extension with its own bound of 30 nested levels.
+    need(depthOf(value) <= 31);
+    need(utf8Length(JSON.stringify(value)) <= 1024 * 1024);
+    const entries = Object.keys(value.documents);
+    need(entries.length <= 32);
+    const result = [];
+    for (const key of entries) {
+      const document = value.documents[key];
+      identityId(key); need(isObject(document) && document.id === key);
+      need(IDENTITY_KINDS.has(document.kind)); identityText(document.name, 250);
+      need(Array.isArray(document.versions) && document.versions.length > 0 && document.versions.length <= 32);
+      let previous = 0; const seen = new Set(); const versions = [];
+      for (const version of document.versions) {
+        need(isObject(version)); identityId(version.id);
+        need(!seen.has(version.id) && Number.isSafeInteger(version.number) && version.number > previous && version.number <= 1000000);
+        seen.add(version.id); previous = version.number;
+        identityText(version.originalText, 65536);
+        need(utf8Length(version.originalText) <= 65536);
+        const scope = identityScope(version.scope);
+        const provenance = identityProvenance(version.provenance, document.kind);
+        identityTimestamp(version.createdAt);
+        need(isObject(version.review)); identityText(version.review.by, 200); identityTimestamp(version.review.at);
+        const endorsements = identityEndorsements(version, document.kind);
+        versions.push({ id: version.id, number: version.number, text: version.originalText, scope, provenance, createdAt: version.createdAt, review: { by: version.review.by, at: version.review.at }, endorsements });
+      }
+      result.push({ id: document.id, kind: document.kind, name: document.name, versions });
+    }
+    return result;
+  }
+  function readWebVault(root, payloadSchema) {
+    need(isObject(root));
+    const readAs = 'emma-local-vault/3';
+    need(payloadSchema === readAs && root.version === '3.0' || payloadSchema === 'emma-local-vault/2' && root.version === '2.0');
+    text(root.id, 200); need(root.id);
+    text(root.name, 200); need(root.name.trim());
+    const created = timestamp(root.created), updated = timestamp(root.updated);
+    need(isObject(root.content) && isObject(root.content.memories));
+    const ids = Object.keys(root.content.memories);
+    need(ids.length <= 2000);
+    const memories = ids.map(id => webMemory(root.content.memories[id], id, updated));
+    for (const name of ['people', 'media', 'relationships', 'settings']) need(isObject(root.content[name]));
+    const documents = root.content.identityDocuments === undefined ? [] : identityDocuments(root.content.identityDocuments);
+    need(isObject(root.recovery) && Array.isArray(root.recovery.warnings) && root.recovery.warnings.length <= 100);
+    const warnings = root.recovery.warnings.map(item => text(item, 2000));
+    need(utf8Length(JSON.stringify(warnings)) <= 32 * 1024);
+    need(utf8Length(JSON.stringify(root)) <= MAX_VAULT_BYTES);
+    const notices = [];
+    if (payloadSchema === 'emma-local-vault/2') notices.push('This file was written with payload version 2. It is read as version 3, exactly as emma would read it.');
+    if (root.recovery.legacy !== null && root.recovery.legacy !== undefined) notices.push('This vault was imported from a legacy EMMA 1.0 file. The complete original is kept inside the file and is not shown here.');
+    for (const warning of warnings) notices.push('Note recorded in the file: ' + warning);
+    const cards = memories.map(memory => webCard(memory));
+    const peopleNames = new Map();
+    for (const memory of memories) if (!memory.trashedAt) for (const name of memory.people) peopleNames.set(name, (peopleNames.get(name) || 0) + 1);
+    return {
+      kind: 'web', payloadSchema, readAs, notices,
+      vault: { id: root.id, name: root.name, created, updated },
+      memories: cards.filter(card => !card.removedAt).sort(byDate),
+      removed: cards.filter(card => card.removedAt).sort((a, b) => a.removedAt < b.removedAt ? -1 : a.removedAt > b.removedAt ? 1 : 0),
+      people: Array.from(peopleNames, ([name, count]) => ({ name, relationship: null, memoryCount: count })).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0),
+      documents
+    };
+  }
+  function byDate(a, b) { return a.saved < b.saved ? -1 : a.saved > b.saved ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0; }
+  function webCard(memory) {
+    const source = memory.source;
+    let sourceLine = source.kind + ' · ' + source.reference + ' · ' + source.creator + ' · captured ' + source.capturedAt;
+    if (source.version !== undefined) sourceLine += ' · version ' + source.version;
+    if (source.evidenceKind !== undefined) sourceLine += ' · ' + source.evidenceKind;
+    if (source.confidence !== undefined) sourceLine += ' · confidence ' + source.confidence;
+    if (source.originalRefs !== undefined && source.originalRefs.length) sourceLine += ' · refs ' + source.originalRefs.join(', ');
+    const consent = memory.consent;
+    let consentLine = consent.status;
+    if (consent.by) consentLine += ' · by ' + consent.by;
+    if (consent.note) consentLine += ' · ' + consent.note;
+    consentLine += ' · recorded ' + consent.recordedAt;
+    return {
+      id: memory.id, title: memory.title, text: memory.content, textNote: null,
+      saved: memory.created, about: source.documentDate === undefined ? null : source.documentDate,
+      labels: [], sourceLine, consentLine, people: memory.people, tags: memory.tags,
+      attachments: memory.attachments, removedAt: memory.trashedAt
+    };
+  }
+
+  // ------------------------------------------------------- native vault ----
+  // Payloads written by the native app carry the real record in
+  // content.nativeMemory.archive. The browser-shaped fields beside it are a
+  // mirror the exporter generates; the viewer checks that the mirror matches
+  // the archive exactly and otherwise refuses the file. Nothing is shown from
+  // the mirror itself.
+  const JS_WHITESPACE = new Set([0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x20, 0xa0, 0x1680, 0x2028, 0x2029, 0x202f, 0x205f, 0x3000, 0xfeff]);
+  const isJSWhitespace = code => JS_WHITESPACE.has(code) || (code >= 0x2000 && code <= 0x200a);
+  function nativeText(value, maxBytes) {
+    if (!isString(value) || !wellFormed(value) || utf8Length(value) > maxBytes || !value.trim()) return false;
+    for (const char of value) {
+      const code = char.codePointAt(0);
+      if (!(code === 9 || code === 10 || code === 13 || (code >= 32 && !(code >= 127 && code <= 159)))) return false;
+    }
+    return true;
+  }
+  function personText(value) {
+    if (!isString(value) || !wellFormed(value) || !value || utf8Length(value) > 200) return false;
+    let visible = false;
+    for (const char of value) {
+      const code = char.codePointAt(0);
+      if (!(code >= 32 && !(code >= 127 && code <= 159))) return false;
+      if (!/\s/.test(char)) visible = true;
+    }
+    return visible;
+  }
+  const isInstant = seconds => typeof seconds === 'number' && Number.isFinite(seconds) && seconds + REFERENCE_DATE_OFFSET >= 0 && seconds + REFERENCE_DATE_OFFSET <= 253402300799;
+  function validOrigin(value) {
+    if (!isString(value) || utf8Length(value) > 512 || value !== value.trim()) return false;
+    const match = /^(https?):\/\/([^/?#@\s:]+)(?::(\d{1,5}))?$/.exec(value);
+    if (!match) return false;
+    const scheme = match[1], host = match[2];
+    if (host !== host.toLowerCase() || host.endsWith('.') || host === 'emma.honesty.tools') return false;
+    if (match[3] !== undefined && (Number(match[3]) < 1 || Number(match[3]) > 65535)) return false;
+    return scheme === 'https' || ['localhost', '127.0.0.1', '::1', '[::1]'].includes(host);
+  }
+  function temporalReference(value) {
+    need(isObject(value) && Object.keys(value).every(key => ['id', 'sha256'].includes(key)));
+    need(isUUID(value.id) && isString(value.sha256) && /^[0-9a-f]{64}$/.test(value.sha256));
+    return value.id;
+  }
+  function temporalReferences(value) {
+    need(Array.isArray(value) && value.length <= 12);
+    const ids = value.map(temporalReference);
+    for (let i = 1; i < ids.length; i += 1) need(ids[i - 1] < ids[i]);
+    return ids;
+  }
+  function temporalMetadata(value) {
+    need(isObject(value));
+    const keys = ['kind', 'parents', 'target', 'recollectedAt', 'applicability', 'purpose', 'validFrom', 'validThrough', 'claimedOwnerAction'];
+    need(Object.keys(value).every(key => keys.includes(key)));
+    need(['source', 'perspective', 'correction', 'withdrawal'].includes(value.kind));
+    const parents = temporalReferences(value.parents);
+    const target = has(value, 'target') ? temporalReference(value.target) : null;
+    if (has(value, 'recollectedAt')) need(isInstant(value.recollectedAt));
+    if (has(value, 'applicability')) need(['historical', 'present', 'future'].includes(value.applicability));
+    if (has(value, 'purpose')) need(['everydayAssistance', 'personalReflection'].includes(value.purpose));
+    if (has(value, 'validFrom')) need(isCalendarDate(value.validFrom));
+    if (has(value, 'validThrough')) need(isCalendarDate(value.validThrough));
+    if (has(value, 'validFrom') && has(value, 'validThrough')) need(value.validFrom <= value.validThrough);
+    let action = null;
+    if (has(value, 'claimedOwnerAction')) {
+      const claimed = value.claimedOwnerAction;
+      need(isObject(claimed) && Object.keys(claimed).every(key => ['id', 'kind', 'at', 'basis'].includes(key)));
+      need(isUUID(claimed.id) && ['endorse', 'withdraw'].includes(claimed.kind) && isInstant(claimed.at));
+      need(sortedKeysJSON(claimed.basis) === sortedKeysJSON(value.parents));
+      action = claimed.kind;
+    }
+    if (value.kind === 'source') need(target === null && !has(value, 'applicability') && !has(value, 'purpose') && !has(value, 'validFrom') && !has(value, 'validThrough') && action === null);
+    else if (value.kind === 'withdrawal') need(target !== null && parents.includes(target) && !has(value, 'applicability') && !has(value, 'purpose') && !has(value, 'validFrom') && !has(value, 'validThrough') && !has(value, 'recollectedAt') && action === 'withdraw');
+    else need(target !== null && parents.includes(target) && has(value, 'applicability') && has(value, 'purpose') && (action === null || action === 'endorse'));
+    return { kind: value.kind };
+  }
+  function nativeRow(value) {
+    need(isObject(value));
+    const keys = ['id', 'text', 'sourceRequestID', 'sourceOrigin', 'createdAt', 'metadata', 'temporal', 'attribution'];
+    need(Object.keys(value).every(key => keys.includes(key)));
+    need(isUUID(value.id) && nativeText(value.text, 600) && isInstant(value.createdAt));
+    need(has(value, 'sourceRequestID') === has(value, 'sourceOrigin'));
+    if (has(value, 'sourceRequestID')) need(isUUID(value.sourceRequestID) && validOrigin(value.sourceOrigin));
+    let perspective = 'unspecified', voice = 'unspecified', eventDate = null;
+    if (has(value, 'metadata')) {
+      const metadata = value.metadata;
+      need(isObject(metadata) && Object.keys(metadata).every(key => ['perspective', 'eventDate', 'voice'].includes(key)));
+      need(['unspecified', 'past', 'present', 'future'].includes(metadata.perspective));
+      need(['unspecified', 'ownerWords', 'assisted', 'other'].includes(metadata.voice));
+      if (has(metadata, 'eventDate')) need(isCalendarDate(metadata.eventDate));
+      perspective = metadata.perspective; voice = metadata.voice; eventDate = has(metadata, 'eventDate') ? metadata.eventDate : null;
+    }
+    const temporal = has(value, 'temporal') ? temporalMetadata(value.temporal) : null;
+    let attribution = null;
+    if (has(value, 'attribution')) {
+      const given = value.attribution;
+      need(isObject(given) && Object.keys(given).length === 2 && given.kind === 'relative' && isUUID(given.personID) && voice === 'other');
+      attribution = given.personID;
+    }
+    return { id: value.id, text: value.text, sourceRequestID: has(value, 'sourceRequestID') ? value.sourceRequestID : null, sourceOrigin: has(value, 'sourceOrigin') ? value.sourceOrigin : null,
+      createdAt: value.createdAt, hasMetadata: has(value, 'metadata'), perspective, voice, eventDate, temporal, attribution };
+  }
+  function nativePerson(value) {
+    need(isObject(value) && Object.keys(value).every(key => ['id', 'name', 'relationship', 'memoryIDs'].includes(key)));
+    need(isUUID(value.id) && personText(value.name));
+    if (has(value, 'relationship')) need(personText(value.relationship));
+    need(Array.isArray(value.memoryIDs) && value.memoryIDs.length <= 500 && value.memoryIDs.every(isUUID));
+    for (let i = 1; i < value.memoryIDs.length; i += 1) need(value.memoryIDs[i - 1] < value.memoryIDs[i]);
+    return { id: value.id, name: value.name, relationship: has(value, 'relationship') ? value.relationship : null, memoryIDs: value.memoryIDs };
+  }
+  function readNativeArchive(archive) {
+    need(isObject(archive) && Object.keys(archive).every(key => ['version', 'memories', 'people', 'voiceAttachments'].includes(key)));
+    const version = archive.version;
+    need(Number.isInteger(version) && [1, 2, 3, 4, 6].includes(version));
+    need(Array.isArray(archive.memories));
+    const rows = archive.memories.map(nativeRow);
+    need(new Set(rows.map(row => row.id)).size === rows.length);
+    let people = [];
+    if (version === 6) {
+      need(has(archive, 'people') && has(archive, 'voiceAttachments'));
+      need(Array.isArray(archive.voiceAttachments) && archive.voiceAttachments.length === 0);
+      need(rows.length <= 500);
+      need(Array.isArray(archive.people)); people = archive.people.map(nativePerson);
+    } else {
+      need(has(archive, 'people') === (version === 4) && !has(archive, 'voiceAttachments'));
+      need(rows.length <= 12 && rows.every(row => row.attribution === null));
+      need(version >= 2 || rows.every(row => !row.hasMetadata));
+      need(version >= 3 || rows.every(row => row.temporal === null));
+      if (version === 4) { need(Array.isArray(archive.people)); people = archive.people.map(nativePerson); }
+    }
+    need(people.length <= 64 && new Set(people.map(person => person.id)).size === people.length);
+    for (let i = 1; i < people.length; i += 1) need(people[i - 1].id < people[i].id);
+    const ids = new Set(rows.map(row => row.id));
+    for (const person of people) need(person.memoryIDs.every(id => ids.has(id)));
+    need(utf8Length(sortedKeysJSON(archive)) <= (version === 6 ? 1048576 : 32768));
+    return { version, rows, people };
+  }
+  function extensionSchema(version) { return version === 6 ? 'emma-native-memory/4' : version === 4 ? 'emma-native-memory/3' : version === 3 ? 'emma-native-memory/2' : 'emma-native-memory/1'; }
+  function nativeProjection(archive, root) {
+    const people = {};
+    for (const person of archive.people) {
+      const record = { id: person.id, name: person.name, memoryIDs: person.memoryIDs };
+      if (person.relationship !== null) record.relationship = person.relationship;
+      people[person.id] = record;
+    }
+    const memories = {};
+    for (const row of archive.rows) {
+      const stamp = referenceSecondsToISO(row.createdAt);
+      const future = row.perspective === 'future';
+      memories[row.id] = { id: row.id, title: future ? 'Future possibility' : 'Emma memory', content: row.text, created: stamp, updated: stamp, trashedAt: null,
+        source: { kind: row.sourceRequestID === null ? 'manual' : 'import', reference: row.sourceOrigin === null ? 'Saved in Emma' : row.sourceOrigin + '/v1/requests/' + row.sourceRequestID,
+          creator: row.attribution === null ? 'Not recorded' : 'relative:' + row.attribution, capturedAt: stamp },
+        consent: { status: 'unknown', by: '', note: 'Local memory backup; importing grants no agent access.', recordedAt: stamp },
+        people: archive.people.filter(person => person.memoryIDs.includes(row.id)).map(person => person.id),
+        tags: future ? ['Aspiration, not prediction'] : [], attachments: [] };
+    }
+    const family = archive.version === 6, includesPeople = archive.version >= 4;
+    return { schema: family ? 'emma-local-vault/5' : includesPeople ? 'emma-local-vault/4' : 'emma-local-vault/3', version: family ? '5.0' : includesPeople ? '4.0' : '3.0',
+      id: root.id, name: root.name, created: root.created, updated: root.updated,
+      content: { memories, people, media: {}, relationships: {}, settings: {}, nativeMemory: { schema: extensionSchema(archive.version), archive: root.content.nativeMemory.archive } },
+      recovery: { warnings: [], legacy: null } };
+  }
+  function readNativeVault(root, payloadSchema, plaintextLength, maxDepth) {
+    need(maxDepth <= 50);
+    const rootKeys = ['schema', 'version', 'id', 'name', 'created', 'updated', 'content', 'recovery'];
+    need(Object.keys(root).length === 8 && rootKeys.every(key => has(root, key)));
+    const expectedVersion = { 'emma-local-vault/3': '3.0', 'emma-local-vault/4': '4.0', 'emma-local-vault/5': '5.0' }[payloadSchema];
+    need(expectedVersion !== undefined && root.version === expectedVersion);
+    need(plaintextLength <= (payloadSchema === 'emma-local-vault/5' ? NATIVE_FAMILY_PAYLOAD_BYTES : NATIVE_LEGACY_PAYLOAD_BYTES));
+    need(isUUID(root.id));
+    need(isString(root.name) && root.name.length <= 200 && Array.from(root.name).some(char => !isJSWhitespace(char.codePointAt(0))));
+    need(isExactISO(root.created) && isExactISO(root.updated));
+    need(isObject(root.content) && isObject(root.content.nativeMemory));
+    const extension = root.content.nativeMemory;
+    need(Object.keys(extension).length === 2 && isString(extension.schema) && isObject(extension.archive));
+    if (payloadSchema === 'emma-local-vault/5') need(extension.schema === 'emma-native-memory/4');
+    else need(['emma-native-memory/1', 'emma-native-memory/2', 'emma-native-memory/3'].includes(extension.schema));
+    const archive = readNativeArchive(extension.archive);
+    need(extension.schema === extensionSchema(archive.version));
+    need(sortedKeysJSON(root) === sortedKeysJSON(nativeProjection(archive, root)));
+    const peopleById = new Map(archive.people.map(person => [person.id, person]));
+    const cards = archive.rows.map(row => {
+      const labels = [];
+      if (row.perspective === 'past') labels.push('Then');
+      else if (row.perspective === 'present') labels.push('Now');
+      else if (row.perspective === 'future') { labels.push('Someday'); labels.push('Aspiration, not prediction'); }
+      if (row.attribution !== null) labels.push(peopleById.has(row.attribution) ? 'Written by ' + peopleById.get(row.attribution).name : 'Written by family');
+      else if (row.voice === 'assisted') labels.push('agent-assisted');
+      else if (row.voice === 'other') labels.push("Another person's words");
+      if (row.temporal !== null) labels.push('Time-aware record: ' + row.temporal.kind);
+      const sourceLine = row.sourceRequestID === null ? 'Saved in emma' : 'From a request to ' + row.sourceOrigin + ' · request ' + row.sourceRequestID;
+      return { id: row.id, title: null, text: row.text, textNote: null, saved: referenceSecondsToISO(row.createdAt), about: row.eventDate, labels, sourceLine, consentLine: null,
+        people: archive.people.filter(person => person.memoryIDs.includes(row.id)).map(person => person.name), tags: [], attachments: [], removedAt: null };
+    });
+    return {
+      kind: 'native', payloadSchema, readAs: payloadSchema, notices: ['Written by the emma app on a phone or Mac. Each memory is shown from the app\'s own record, exactly as saved.'],
+      vault: { id: root.id, name: root.name, created: root.created, updated: root.updated },
+      memories: cards.sort(byDate), removed: [],
+      people: archive.people.map(person => ({ name: person.name, relationship: person.relationship, memoryCount: person.memoryIDs.length })),
+      documents: []
+    };
+  }
+
+  // ------------------------------------------------------- legacy 1.0 ----
+  const LEGACY_WARNING = 'Legacy EMMA 1.0 file. Its header was not authenticated; emma\'s current files use EMMA 2.0. Shown read-only, exactly as recovered.';
+  const LEGACY_MEDIA = 'Legacy media is kept as raw recovery data and is not displayed. Original exports may have lost the media bytes; no reader can rebuild missing bytes.';
+  function readLegacyVault(root) {
+    need(isObject(root) && isObject(root.content) && isObject(root.content.memories));
+    const name = isString(root.name) && root.name ? root.name : (isObject(root.metadata) && isString(root.metadata.name) && root.metadata.name ? root.metadata.name : 'Recovered vault');
+    need(name.length <= 200);
+    const cards = [];
+    let media = isObject(root.content.media) && Object.keys(root.content.media).length > 0;
+    const ids = Object.keys(root.content.memories);
+    need(ids.length <= 2000);
+    const peopleNames = new Map();
+    for (const id of ids) {
+      const memory = root.content.memories[id];
+      need(isObject(memory));
+      const content = isString(memory.content) ? memory.content : (isObject(memory.content) ? memory.content.text : undefined);
+      need(isString(content) && content.length <= 200000);
+      const metadata = isObject(memory.metadata) ? memory.metadata : {};
+      const title = text(isString(metadata.title) ? metadata.title : (isString(memory.title) ? memory.title : undefined), 250, content.slice(0, 80) || 'Recovered memory');
+      const names = Array.isArray(metadata.people) ? metadata.people.filter(isString) : [];
+      const tags = Array.isArray(metadata.tags) ? metadata.tags.filter(isString) : [];
+      need(names.length <= 100 && tags.length <= 100);
+      if (Array.isArray(memory.attachments) && memory.attachments.length) media = true;
+      const saved = isString(memory.created) && Number.isFinite(Date.parse(memory.created)) ? new Date(memory.created).toISOString() : null;
+      for (const person of names) peopleNames.set(person, (peopleNames.get(person) || 0) + 1);
+      cards.push({ id, title, text: content, textNote: content.trim() ? null : 'This legacy memory had no text. It was media only, and the media is not shown.',
+        saved, about: null, labels: [], sourceLine: 'legacy · Legacy memory ' + id + ' · Not recorded',
+        consentLine: 'unknown · Consent not established by the legacy file.', people: names, tags, attachments: [], removedAt: null });
+    }
+    const notices = [LEGACY_WARNING];
+    if (media) notices.push(LEGACY_MEDIA);
+    return {
+      kind: 'legacy', payloadSchema: 'EMMA/1.0 legacy', readAs: 'legacy', notices,
+      vault: { id: null, name, created: null, updated: null },
+      memories: cards, removed: [],
+      people: Array.from(peopleNames, ([person, count]) => ({ name: person, relationship: null, memoryCount: count })).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0),
+      documents: []
+    };
+  }
+
+  // ------------------------------------------------------------ reading ----
+  function readPayload(plaintext, facts) {
+    try {
+      need(plaintext.length <= MAX_VAULT_BYTES);
+      const textValue = fatalDecoder.decode(plaintext);
+      const { value: root, maxDepth } = parseStrictJSON(textValue);
+      need(isObject(root));
+      if (facts.legacy) return readLegacyVault(root);
+      const schema = root.schema;
+      need(isString(schema));
+      if (isObject(root.content) && has(root.content, 'nativeMemory')) return readNativeVault(root, schema, plaintext.length, maxDepth);
+      need(schema === 'emma-local-vault/3' || schema === 'emma-local-vault/2');
+      return readWebVault(root, schema);
+    } catch (error) {
+      if (error instanceof ViewerError) throw error;
+      throw new ViewerError('unsupported');
+    }
+  }
+  async function open(bytes, passphrase, onProgress) {
+    const { plaintext, facts } = await unlock(bytes, passphrase, onProgress);
+    try { return { reading: readPayload(plaintext, facts), plaintext, facts }; }
+    catch (error) { plaintext.fill(0); throw error; }
+  }
+
+  // ------------------------------------------------------ plain copies ----
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  function friendlyDate(iso) {
+    if (!isString(iso)) return 'not recorded';
+    const date = new Date(iso);
+    if (!Number.isFinite(date.getTime())) return iso;
+    const pad = n => String(n).padStart(2, '0');
+    return date.getUTCDate() + ' ' + MONTHS[date.getUTCMonth()] + ' ' + date.getUTCFullYear() + ' at ' + pad(date.getUTCHours()) + ':' + pad(date.getUTCMinutes()) + ' UTC';
+  }
+  function toMarkdown(reading, fileFacts) {
+    const lines = [];
+    lines.push('# ' + reading.vault.name);
+    lines.push('');
+    lines.push('Plain copy made by emma viewer 0.1. Each memory\'s words are copied exactly, between its details and the next --- line.');
+    lines.push('');
+    lines.push('- File: ' + (fileFacts && fileFacts.name ? fileFacts.name : 'not recorded'));
+    lines.push('- File SHA-256: ' + (fileFacts && fileFacts.sha256 ? fileFacts.sha256 : 'not recorded'));
+    lines.push('- Envelope: ' + (fileFacts && fileFacts.envelope ? fileFacts.envelope : 'not recorded'));
+    lines.push('- Payload: ' + reading.payloadSchema + (reading.readAs !== reading.payloadSchema ? ' (read as ' + reading.readAs + ')' : ''));
+    lines.push('- Vault ID: ' + (reading.vault.id || 'not recorded'));
+    lines.push('- Created: ' + (reading.vault.created || 'not recorded'));
+    lines.push('- Updated: ' + (reading.vault.updated || 'not recorded'));
+    for (const notice of reading.notices) lines.push('- Notice: ' + notice);
+    lines.push('');
+    const card = (memory, removed) => {
+      lines.push('### ' + (memory.title === null ? 'Memory' : memory.title));
+      lines.push('');
+      lines.push('- Saved: ' + (memory.saved || 'not recorded'));
+      if (memory.about !== null) lines.push('- About: ' + memory.about);
+      if (memory.labels.length) lines.push('- Labels: ' + memory.labels.join(' · '));
+      if (memory.sourceLine !== null) lines.push('- Source: ' + memory.sourceLine);
+      if (memory.consentLine !== null) lines.push('- Consent: ' + memory.consentLine);
+      if (memory.people.length) lines.push('- People: ' + memory.people.join(', '));
+      if (memory.tags.length) lines.push('- Tags: ' + memory.tags.join(', '));
+      if (memory.attachments.length) lines.push('- Attachments: ' + memory.attachments.map(item => item.name + ' (' + item.type + ', ' + item.size + ' bytes)').join(', '));
+      if (removed) lines.push('- Removed by the owner: ' + memory.removedAt);
+      if (memory.textNote !== null) lines.push('- Viewer note: ' + memory.textNote);
+      lines.push('');
+      lines.push(memory.text);
+      lines.push('');
+      lines.push('---');
+      lines.push('');
+    };
+    lines.push('## Memories (' + reading.memories.length + ')');
+    lines.push('');
+    for (const memory of reading.memories) card(memory, false);
+    if (reading.removed.length) {
+      lines.push('## Removed by the owner (' + reading.removed.length + ')');
+      lines.push('');
+      for (const memory of reading.removed) card(memory, true);
+    }
+    if (reading.people.length) {
+      lines.push('## People (' + reading.people.length + ')');
+      lines.push('');
+      for (const person of reading.people) lines.push('- ' + person.name + (person.relationship !== null ? ' · ' + person.relationship : '') + ' · ' + person.memoryCount + (person.memoryCount === 1 ? ' memory' : ' memories'));
+      lines.push('');
+    }
+    if (reading.documents.length) {
+      lines.push('## Identity documents (' + reading.documents.length + ')');
+      lines.push('');
+      for (const document of reading.documents) {
+        lines.push('### ' + document.name + ' (' + document.kind + ')');
+        lines.push('');
+        for (const version of document.versions) {
+          lines.push('#### Version ' + version.number);
+          lines.push('');
+          lines.push('- Created: ' + version.createdAt);
+          lines.push('- Scope: ' + version.scope.mode + (version.scope.projectId !== undefined ? ' · project ' + version.scope.projectId : ''));
+          lines.push('- Source: ' + version.provenance.reference + ' · ' + version.provenance.creator + ' · ' + version.provenance.originalName + ' · captured ' + version.provenance.capturedAt);
+          lines.push('- Reviewed: by ' + version.review.by + ' at ' + version.review.at);
+          for (const event of version.endorsements) lines.push('- Horizon ' + event.status + ': by ' + event.by + ' at ' + event.at);
+          lines.push('');
+          lines.push(version.text);
+          lines.push('');
+          lines.push('---');
+          lines.push('');
+        }
+      }
+    }
+    return lines.join('\n');
+  }
+
+  return Object.freeze({ ERRORS, ViewerError, MEDIA_TYPES, ITERATIONS, MAX_FILE_BYTES, inspect, unlock, parseStrictJSON, readPayload, open, toMarkdown, friendlyDate, decodeBase64, sortedKeysJSON, referenceSecondsToISO });
+})();
+globalThis.EmmaViewer = EmmaViewer;
+
+// ------------------------------------------------------------------- UI ----
+if (typeof document !== 'undefined' && document.getElementById('app')) {
+  const $ = id => document.getElementById(id);
+  const state = { bytes: null, fileName: '', facts: null, sha256: '', plaintext: null, reading: null, blobURLs: [] };
+  const setText = (id, value) => { $(id).textContent = value; };
+  const show = (id, visible) => { $(id).hidden = !visible; };
+  const clear = element => { while (element.firstChild) element.removeChild(element.firstChild); };
+  const el = (tag, className, textValue) => {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (textValue !== undefined) node.textContent = textValue;
+    return node;
+  };
+  const hex = buffer => Array.from(new Uint8Array(buffer), byte => byte.toString(16).padStart(2, '0')).join('');
+  const nextFrame = () => new Promise(resolve => setTimeout(resolve, 20));
+
+  function reset() {
+    for (const url of state.blobURLs) URL.revokeObjectURL(url);
+    state.blobURLs = [];
+    if (state.plaintext) state.plaintext.fill(0);
+    state.plaintext = null; state.reading = null; state.bytes = null; state.facts = null; state.sha256 = ''; state.fileName = '';
+    clear($('memories')); clear($('removed')); clear($('people')); clear($('documents')); clear($('notices'));
+    $('passphrase').value = '';
+    $('file-input').value = '';
+    show('vault-panel', false); show('facts-panel', false); show('file-error', false); show('unlock-error', false); show('progress', false);
+    show('removed-section', false); show('people-section', false); show('documents-section', false);
+    $('unlock-button').disabled = true;
+  }
+
+  async function chooseFile(file) {
+    reset();
+    if (!file) return;
+    state.fileName = file.name;
+    let bytes;
+    try { bytes = new Uint8Array(await file.arrayBuffer()); }
+    catch (error) { setText('file-error', EmmaViewer.ERRORS.unreadable); show('file-error', true); return; }
+    try { state.facts = EmmaViewer.inspect(bytes); }
+    catch (error) { setText('file-error', EmmaViewer.ERRORS.notEmma); show('file-error', true); return; }
+    state.bytes = bytes;
+    state.sha256 = hex(await crypto.subtle.digest('SHA-256', bytes));
+    setText('fact-name', file.name);
+    setText('fact-size', bytes.length.toLocaleString('en-US') + ' bytes');
+    setText('fact-format', state.facts.legacy ? 'EMMA/1.0 (legacy, header not authenticated)' : 'EMMA/2.0 · PBKDF2 ' + state.facts.iterations.toLocaleString('en-US') + ' rounds · AES-256-GCM');
+    setText('fact-sha', state.sha256);
+    show('facts-panel', true);
+    $('unlock-button').disabled = $('passphrase').value.length === 0;
+    $('passphrase').focus();
+  }
+
+  async function unlockFile() {
+    if (!state.bytes) return;
+    const passphrase = $('passphrase').value;
+    if (!passphrase) return;
+    show('unlock-error', false);
+    $('unlock-button').disabled = true;
+    const progress = async stage => {
+      setText('progress', stage === 'deriving' ? 'Unlocking. Turning the passphrase into a key takes a few seconds on purpose.' : 'Checking and decrypting the file.');
+      show('progress', true);
+      await nextFrame();
+    };
+    try {
+      const { reading, plaintext } = await EmmaViewer.open(state.bytes, passphrase, progress);
+      state.plaintext = plaintext; state.reading = reading;
+      $('passphrase').value = '';
+      render(reading);
+    } catch (error) {
+      const code = error instanceof EmmaViewer.ViewerError ? error.code : 'unsupported';
+      setText('unlock-error', EmmaViewer.ERRORS[code]);
+      show('unlock-error', true);
+    } finally {
+      show('progress', false);
+      $('unlock-button').disabled = $('passphrase').value.length === 0;
+    }
+  }
+
+  function renderCard(memory, removed) {
+    const article = el('article', 'memory');
+    if (memory.title !== null) article.appendChild(el('h3', null, memory.title));
+    const meta = el('div', 'meta');
+    meta.appendChild(el('div', null, 'Saved ' + EmmaViewer.friendlyDate(memory.saved)));
+    if (memory.about !== null) meta.appendChild(el('div', null, 'About ' + memory.about));
+    if (removed) meta.appendChild(el('div', null, 'Removed by the owner ' + EmmaViewer.friendlyDate(memory.removedAt)));
+    if (memory.sourceLine !== null) meta.appendChild(el('div', null, 'Source: ' + memory.sourceLine));
+    if (memory.consentLine !== null) meta.appendChild(el('div', null, 'Consent: ' + memory.consentLine));
+    if (memory.people.length) meta.appendChild(el('div', null, 'People: ' + memory.people.join(', ')));
+    if (memory.tags.length) meta.appendChild(el('div', null, 'Tags: ' + memory.tags.join(', ')));
+    article.appendChild(meta);
+    if (memory.labels.length) {
+      const labels = el('div', 'labels');
+      for (const label of memory.labels) labels.appendChild(el('span', label === 'Aspiration, not prediction' ? 'pill someday' : 'pill', label));
+      article.appendChild(labels);
+    }
+    if (memory.textNote !== null) article.appendChild(el('p', 'muted small', 'Viewer note: ' + memory.textNote));
+    if (memory.text) article.appendChild(el('p', 'text', memory.text));
+    if (memory.attachments.length) {
+      const list = el('div', 'attachments');
+      for (const item of memory.attachments) {
+        const figure = el('figure');
+        let media = null;
+        try {
+          const blob = new Blob([EmmaViewer.decodeBase64(item.data)], { type: item.type });
+          const url = URL.createObjectURL(blob);
+          state.blobURLs.push(url);
+          if (item.type.startsWith('image/')) { media = el('img'); media.alt = item.name; }
+          else if (item.type.startsWith('audio/')) { media = el('audio'); media.controls = true; media.preload = 'metadata'; }
+          else { media = el('video'); media.controls = true; media.preload = 'metadata'; }
+          media.src = url;
+        } catch (error) { media = el('p', 'muted small', 'This attachment could not be decoded.'); }
+        figure.appendChild(media);
+        figure.appendChild(el('figcaption', null, item.name + ' · ' + item.type + ' · ' + item.size.toLocaleString('en-US') + ' bytes'));
+        list.appendChild(figure);
+      }
+      article.appendChild(list);
+    }
+    return article;
+  }
+
+  function render(reading) {
+    show('facts-panel', false);
+    setText('vault-name', reading.vault.name);
+    setText('vault-format', (state.facts.envelope) + ' · ' + reading.payloadSchema + (reading.readAs !== reading.payloadSchema ? ' (read as ' + reading.readAs + ')' : ''));
+    setText('vault-id', reading.vault.id || 'not recorded');
+    setText('vault-created', EmmaViewer.friendlyDate(reading.vault.created));
+    setText('vault-updated', EmmaViewer.friendlyDate(reading.vault.updated));
+    const counts = [reading.memories.length + (reading.memories.length === 1 ? ' memory' : ' memories')];
+    if (reading.removed.length) counts.push(reading.removed.length + ' removed by the owner');
+    if (reading.people.length) counts.push(reading.people.length + (reading.people.length === 1 ? ' person' : ' people'));
+    if (reading.documents.length) counts.push(reading.documents.length + (reading.documents.length === 1 ? ' identity document' : ' identity documents'));
+    setText('vault-counts', counts.join(' · '));
+    const notices = $('notices');
+    clear(notices);
+    for (const notice of reading.notices) notices.appendChild(el('p', 'notice', notice));
+    const memories = $('memories');
+    clear(memories);
+    if (!reading.memories.length) memories.appendChild(el('p', 'muted', 'This file holds no memories.'));
+    for (const memory of reading.memories) memories.appendChild(renderCard(memory, false));
+    const removed = $('removed');
+    clear(removed);
+    for (const memory of reading.removed) removed.appendChild(renderCard(memory, true));
+    setText('removed-summary', 'Removed by the owner (' + reading.removed.length + ')');
+    $('removed-section').open = false;
+    show('removed-section', reading.removed.length > 0);
+    const people = $('people');
+    clear(people);
+    for (const person of reading.people) people.appendChild(el('li', null, person.name + (person.relationship !== null ? ' · ' + person.relationship : '') + ' · ' + person.memoryCount + (person.memoryCount === 1 ? ' memory' : ' memories')));
+    show('people-section', reading.people.length > 0);
+    const documents = $('documents');
+    clear(documents);
+    for (const document_ of reading.documents) {
+      const section = el('section', 'panel document');
+      section.appendChild(el('h3', null, document_.name + ' (' + document_.kind + ')'));
+      const versions = document_.versions.slice().reverse();
+      versions.forEach((version, index) => {
+        const holder = index === 0 ? section : el('details');
+        if (index !== 0) holder.appendChild(el('summary', null, 'Version ' + version.number));
+        const meta = el('div', 'meta muted small');
+        meta.appendChild(el('div', null, (index === 0 ? 'Latest version ' : 'Version ') + version.number + ' · created ' + EmmaViewer.friendlyDate(version.createdAt) + ' · scope ' + version.scope.mode + (version.scope.projectId !== undefined ? ' (project ' + version.scope.projectId + ')' : '')));
+        meta.appendChild(el('div', null, 'Source: ' + version.provenance.reference + ' · ' + version.provenance.creator + ' · ' + version.provenance.originalName + ' · captured ' + EmmaViewer.friendlyDate(version.provenance.capturedAt)));
+        meta.appendChild(el('div', null, 'Reviewed by ' + version.review.by + ' ' + EmmaViewer.friendlyDate(version.review.at)));
+        for (const event of version.endorsements) meta.appendChild(el('div', null, 'Horizon ' + event.status + ' by ' + event.by + ' ' + EmmaViewer.friendlyDate(event.at) + (event.status === 'endorsed' ? ' · an aspiration the owner endorsed, not a past fact' : '')));
+        holder.appendChild(meta);
+        holder.appendChild(el('p', 'text', version.text));
+        if (index !== 0) section.appendChild(holder);
+      });
+      documents.appendChild(section);
+    }
+    show('documents-section', reading.documents.length > 0);
+    show('vault-panel', true);
+    $('vault-name').focus();
+  }
+
+  function download(name, blob) {
+    const url = URL.createObjectURL(blob);
+    const anchor = el('a');
+    anchor.href = url; anchor.download = name;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }
+  function exportPlainCopy() {
+    if (!state.reading || !state.plaintext) return;
+    download('vault.json', new Blob([state.plaintext], { type: 'application/json' }));
+    const markdown = EmmaViewer.toMarkdown(state.reading, { name: state.fileName, sha256: state.sha256, envelope: state.facts.envelope });
+    setTimeout(() => download('memories.md', new Blob([markdown], { type: 'text/markdown' })), 400);
+  }
+
+  $('file-input').addEventListener('change', event => { chooseFile(event.target.files[0]); });
+  $('passphrase').addEventListener('input', () => { $('unlock-button').disabled = $('passphrase').value.length === 0 || !state.bytes; });
+  $('passphrase').addEventListener('keydown', event => { if (event.key === 'Enter' && !$('unlock-button').disabled) unlockFile(); });
+  $('unlock-button').addEventListener('click', unlockFile);
+  $('show-passphrase').addEventListener('click', () => {
+    const field = $('passphrase');
+    const showing = field.type === 'text';
+    field.type = showing ? 'password' : 'text';
+    $('show-passphrase').textContent = showing ? 'Show passphrase' : 'Hide passphrase';
+  });
+  $('export-button').addEventListener('click', exportPlainCopy);
+  $('close-button').addEventListener('click', reset);
+  window.addEventListener('pagehide', reset);
+}
+</script>
+</body>
+</html>
