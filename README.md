@@ -55,9 +55,10 @@ text). Keep them as carefully as the passphrase.
   your copy because of them.
 - **Check the file you downloaded.** `SHA256SUMS` lists the SHA-256 of
   `emma-viewer.html` and `SPEC.md`. On a Mac, run `shasum -a 256 -c SHA256SUMS`
-  in the folder. Archived copies are planned at Software Heritage and the
-  Internet Archive, and at `www.honesty.tools/emma` and GitHub Pages, serving
-  the same bytes; this version is not yet published anywhere.
+  in the folder. The source is at https://github.com/techno-optimist/emma-viewer.
+  Archived copies are planned at Software Heritage and the Internet Archive,
+  and the same bytes are to be served at `www.honesty.tools/emma` and on
+  GitHub Pages; those are not in place yet.
 
 ## What it opens, and what it refuses
 
