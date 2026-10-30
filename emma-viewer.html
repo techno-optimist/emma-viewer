@@ -2,113 +2,266 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-FpGR3fFxJTQ2En+QWqOMEw4Q0tkPw2xHLLq9Zujg9wg='; style-src 'sha256-teZsfMNLI8vhFx1C7ydwJnegq4hx7vmiM0vRphNAXgU='; img-src blob: data:; media-src blob:; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-IwHd/2z76eNyg2uuBV98cxGH4ppP0/njg65CmNIamwc='; style-src 'sha256-3GUgXZXNbKQpS2bUPDVFk0J/H/lesv9vr9+G/FqIXaI='; img-src blob: data:; media-src blob:; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <meta name="referrer" content="no-referrer">
 <link rel="icon" href="data:,">
 <title>emma viewer</title>
 <style>
+/* emma viewer: Lantern palette (amber, paper, cocoa, dusk) from emma's own kit.
+   Installed fonts only: a serif wordmark when Fraunces or a system serif is
+   present, Source Sans or the system sans for everything else. */
 :root {
   color-scheme: light dark;
-  --paper: #fbfaf7; --ink: #1d1c1a; --soft: #5f5b54; --line: #d9d4ca; --card: #ffffff;
-  --accent: #2f5f8f; --accent-ink: #ffffff; --warn-bg: #fff4d6; --warn-ink: #5a4300; --error-bg: #fde8e4; --error-ink: #7a2114;
-  --pill: #eeeae2; --focus: #ff9d2e;
+  --paper: #F6EFE3; --raised: #FCF8F0; --cream: #EFE4D2; --parchment: #E9DCC7;
+  --ink: #2A1810; --cocoa: #604A3C; --muted: #715B4D;
+  --amber: #F7B653; --amber-press: #F2A440; --amber-deep: #A4521D; --amber-ink: #904514; --amber-tint: #F6DFC0; --on-amber: #2A1810;
+  --brick: #8f2a1b; --brick-tint: #f8e1dc; --moss: #2f5a2d; --moss-tint: #e3ecd9; --ochre: #6b4600; --ochre-tint: #f6e7c3;
+  --dusk: #3b3350; --dusk-tint: #e6e1ee;
+  --hairline: #DCCDB9; --line: #C9B59B; --line-strong: #967456; --focus: #2A1810;
+  --glow: rgba(247, 182, 83, 0.28); --glow-soft: rgba(247, 182, 83, 0.12);
+  --sh-1: 0 1px 2px rgb(42 24 16 / 0.04); --sh-2: 0 14px 44px -28px rgb(42 24 16 / 0.28);
+  --font-display: "Fraunces", "Iowan Old Style", "Charter", Georgia, "Times New Roman", serif;
+  --font-text: "Source Sans 3", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --r-sm: 8px; --r-md: 12px; --r-lg: 18px; --r-xl: 26px; --r-pill: 999px;
+  --dur: 220ms; --breath: 6s; --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #17191c; --ink: #ecebe6; --soft: #a8a49b; --line: #3a3e45; --card: #20242a;
-    --accent: #8fb6dc; --accent-ink: #0f1a26; --warn-bg: #3a3010; --warn-ink: #ffe7a6; --error-bg: #4a1a14; --error-ink: #ffd4cc;
-    --pill: #2b3038;
+    --paper: #15131F; --raised: #1E1B2B; --cream: #26223A; --parchment: #2E293F;
+    --ink: #F7E9D2; --cocoa: #D7CBD0; --muted: #BCB1C3;
+    --amber: #F7B754; --amber-press: #FCC867; --amber-deep: #F2A440; --amber-ink: #FCC867; --amber-tint: #3A2B2A; --on-amber: #2A1810;
+    --brick: #f0a090; --brick-tint: #4a221c; --moss: #a9d19e; --moss-tint: #263522; --ochre: #e8c072; --ochre-tint: #3f3014;
+    --dusk: #cfc6e4; --dusk-tint: #2b2740;
+    --hairline: #3A3449; --line: #54475D; --line-strong: #9D8A9F; --focus: #F7E9D2;
+    --glow: rgba(247, 183, 84, 0.22); --glow-soft: rgba(247, 183, 84, 0.08);
+    --sh-1: none; --sh-2: 0 14px 44px -28px rgb(9 7 16 / 0.55);
   }
 }
+@media (prefers-reduced-motion: reduce) { :root { --dur: 0ms; --breath: 0s; } }
+
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { background: var(--paper); color: var(--ink); }
 body {
-  margin: 0; padding: 0 16px 48px;
-  font: 18px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
-  max-width: 860px; margin-inline: auto;
+  margin: 0; padding: 0 16px 56px;
+  font: 18px/1.6 var(--font-text);
+  background: radial-gradient(70rem 32rem at 50% -14rem, var(--glow) 0%, var(--glow-soft) 38%, transparent 70%) no-repeat, var(--paper);
+  min-height: 100vh;
 }
-h1 { font-size: 1.6rem; margin: 28px 0 4px; }
-h2 { font-size: 1.25rem; margin: 32px 0 12px; }
-h3 { font-size: 1.1rem; margin: 0 0 8px; }
+main, header.masthead, footer { max-width: 56rem; margin-inline: auto; }
+h1, h2, h3, .vault-title { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.005em; margin: 0; }
+h2 { font-size: 1.5rem; line-height: 1.25; margin: 40px 0 14px; }
+h3 { font-size: 1.25rem; line-height: 1.3; }
 p { margin: 0 0 12px; }
-.muted { color: var(--soft); }
+.muted { color: var(--muted); }
 .small { font-size: 0.9rem; }
-header p { margin-bottom: 20px; }
-section.panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin: 16px 0; }
-.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-button, .filebutton {
-  font: inherit; font-weight: 600; padding: 12px 20px; border-radius: 10px; cursor: pointer;
-  border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink);
-}
-button.secondary, .filebutton.secondary { background: transparent; color: var(--accent); }
-button:disabled { opacity: 0.5; cursor: default; }
-button:focus-visible, .filebutton:focus-within, input:focus-visible, summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-.filebutton { display: inline-block; position: relative; overflow: hidden; }
-.filebutton input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; font-size: 1rem; }
-label.field { display: block; margin: 12px 0 6px; font-weight: 600; }
-input[type="password"], input[type="text"] {
-  font: inherit; width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink);
-}
-dl.facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0 0 12px; }
-dl.facts dt { color: var(--soft); }
-dl.facts dd { margin: 0; overflow-wrap: anywhere; }
-.notice { background: var(--warn-bg); color: var(--warn-ink); border-radius: 10px; padding: 12px 16px; margin: 12px 0; }
-.error { background: var(--error-bg); color: var(--error-ink); border-radius: 10px; padding: 12px 16px; margin: 12px 0; font-weight: 600; }
-.progress { color: var(--soft); margin: 12px 0; }
-article.memory { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; margin: 14px 0; }
-article.memory .text { white-space: pre-wrap; overflow-wrap: anywhere; margin: 12px 0 0; font-size: 1.05rem; }
-article.memory .meta { color: var(--soft); font-size: 0.92rem; }
-article.memory .meta div { margin: 2px 0; overflow-wrap: anywhere; }
-.labels { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 0; }
-.pill { background: var(--pill); border-radius: 999px; padding: 2px 12px; font-size: 0.85rem; }
-.pill.someday { border: 1px solid var(--line); }
-.attachments { margin: 12px 0 0; display: grid; gap: 10px; }
-.attachments figure { margin: 0; }
-.attachments figcaption { color: var(--soft); font-size: 0.85rem; margin-top: 4px; overflow-wrap: anywhere; }
-.attachments img, .attachments video { max-width: 100%; max-height: 420px; border-radius: 8px; border: 1px solid var(--line); display: block; }
-.attachments audio { width: 100%; }
-details { margin: 16px 0; }
-summary { cursor: pointer; font-weight: 600; font-size: 1.1rem; padding: 8px 0; }
-ul.plain { list-style: none; padding: 0; margin: 0; }
-ul.plain li { padding: 8px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
-.document .text { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin: 8px 0; }
-footer { margin-top: 48px; color: var(--soft); font-size: 0.9rem; }
+.mono { font-family: var(--font-mono); font-size: 0.82rem; letter-spacing: 0.01em; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Masthead */
+header.masthead { display: flex; align-items: center; gap: 18px; padding: 34px 0 10px; }
+.mark { width: 56px; height: 56px; flex: none; }
+.mark-glow { fill: var(--amber); opacity: 0.22; }
+.mark-body { fill: var(--amber); }
+.mark-ring { fill: none; stroke: var(--amber-deep); stroke-width: 2.5; stroke-linecap: round; }
+.mark-flame { fill: var(--raised); }
+.mark-window { fill: var(--amber-deep); opacity: 0.35; }
+.wordmark { font-family: var(--font-display); font-size: 2.3rem; line-height: 1; font-weight: 600; letter-spacing: -0.01em; }
+.wordmark small { font-family: var(--font-text); font-size: 0.95rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-left: 10px; vertical-align: 0.35em; }
+.tagline { color: var(--cocoa); margin: 6px 0 0; }
+
+/* Steps */
+ol.steps { list-style: none; display: flex; gap: 8px; padding: 0; margin: 18px 0 8px; flex-wrap: wrap; }
+.step { display: flex; align-items: center; gap: 10px; padding: 8px 16px 8px 10px; border-radius: var(--r-pill); border: 1px solid var(--hairline); background: var(--raised); color: var(--muted); font-weight: 600; font-size: 0.95rem; transition: background var(--dur) var(--ease), color var(--dur) var(--ease); }
+.step-n { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--cream); color: var(--cocoa); font-size: 0.9rem; }
+body[data-step="choose"] .step[data-step="choose"], body[data-step="unlock"] .step[data-step="unlock"], body[data-step="read"] .step[data-step="read"] { background: var(--amber-tint); color: var(--ink); border-color: transparent; }
+body[data-step="choose"] .step[data-step="choose"] .step-n, body[data-step="unlock"] .step[data-step="unlock"] .step-n, body[data-step="read"] .step[data-step="read"] .step-n { background: var(--amber); color: var(--on-amber); }
+body[data-step="unlock"] .step[data-step="choose"] .step-n, body[data-step="read"] .step[data-step="choose"] .step-n, body[data-step="read"] .step[data-step="unlock"] .step-n { background: var(--moss-tint); color: var(--moss); }
+
+/* Panels and cards */
+section.panel { background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r-xl); padding: 26px 28px; margin: 18px 0; box-shadow: var(--sh-2); }
+.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.panel-title { font-family: var(--font-text); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 14px; }
+
+/* Buttons */
+button, .filebutton {
+  font: inherit; font-weight: 700; padding: 13px 22px; border-radius: var(--r-pill); cursor: pointer; line-height: 1.2;
+  border: 1px solid var(--amber); background: var(--amber); color: var(--on-amber);
+  transition: background var(--dur) var(--ease), transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  box-shadow: var(--sh-1);
+}
+button:hover:not(:disabled), .filebutton:hover { background: var(--amber-press); border-color: var(--amber-press); }
+button:active:not(:disabled) { transform: translateY(1px); }
+button.secondary, .filebutton.secondary { background: transparent; color: var(--ink); border-color: var(--line-strong); box-shadow: none; }
+button.secondary:hover:not(:disabled) { background: var(--parchment); border-color: var(--line-strong); }
+button.quiet { background: transparent; border-color: transparent; color: var(--amber-ink); padding-inline: 10px; box-shadow: none; }
+button.quiet:hover:not(:disabled) { background: var(--amber-tint); border-color: transparent; }
+button:disabled { opacity: 0.45; cursor: default; }
+button:focus-visible, .filebutton:focus-within, input:focus-visible, summary:focus-visible, details:focus-visible { outline: 3px solid var(--amber-deep); outline-offset: 3px; }
+.filebutton { display: inline-flex; align-items: center; gap: 10px; position: relative; overflow: hidden; }
+.filebutton svg { width: 22px; height: 22px; }
+.filebutton input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; font-size: 1rem; }
+
+/* Pick panel */
+#pick-panel { border-style: dashed; border-color: var(--line); background: var(--raised); text-align: center; padding: 38px 28px; transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease); }
+#pick-panel.dragging { background: var(--amber-tint); border-color: var(--amber-deep); border-style: solid; }
+#pick-panel .row { justify-content: center; }
+.drop-hint { color: var(--muted); margin: 14px 0 0; }
+
+/* Facts */
+dl.facts { display: grid; grid-template-columns: max-content 1fr; gap: 8px 20px; margin: 0; align-items: baseline; }
+dl.facts dt { color: var(--muted); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+dl.facts dd { margin: 0; overflow-wrap: anywhere; }
+.divider { border: 0; border-top: 1px dashed var(--line); margin: 20px 0; }
+label.field { display: block; margin: 4px 0 8px; font-weight: 700; }
+input[type="password"], input[type="text"] {
+  font: inherit; font-size: 1.15rem; width: 100%; padding: 14px 16px; border-radius: var(--r-md); border: 1.5px solid var(--line); background: var(--paper); color: var(--ink);
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+input[type="password"]:focus, input[type="text"]:focus { border-color: var(--amber-deep); box-shadow: 0 0 0 4px var(--amber-tint); outline: none; }
+.hint { color: var(--muted); font-size: 0.9rem; margin: 8px 0 16px; }
+
+/* Messages */
+.notice { display: flex; gap: 12px; align-items: flex-start; background: var(--ochre-tint); color: var(--ochre); border-radius: var(--r-md); padding: 12px 16px; margin: 12px 0; }
+.notice::before { content: ""; flex: none; width: 10px; height: 10px; margin-top: 0.55em; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 4px var(--glow); }
+.error { background: var(--brick-tint); color: var(--brick); border-radius: var(--r-md); padding: 12px 16px; margin: 14px 0 0; font-weight: 600; }
+.progress { display: flex; align-items: center; gap: 12px; color: var(--cocoa); margin: 14px 0 0; }
+.progress::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 6px var(--glow); animation: breathe var(--breath) ease-in-out infinite; }
+@keyframes breathe { 0%, 100% { box-shadow: 0 0 0 4px var(--glow); } 50% { box-shadow: 0 0 0 12px var(--glow-soft); } }
+
+/* Vault header */
+.vault-title { font-size: 2rem; line-height: 1.15; margin: 0 0 6px; overflow-wrap: anywhere; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
+.chip { background: var(--cream); color: var(--cocoa); border-radius: var(--r-pill); padding: 4px 12px; font-size: 0.9rem; font-weight: 600; }
+.actions { margin-top: 18px; }
+.copy-hint { color: var(--muted); font-size: 0.9rem; margin: 10px 0 0; }
+
+/* Memory cards */
+#memories, #removed { display: grid; gap: 16px; }
+article.memory { display: grid; grid-template-columns: 76px 1fr; gap: 18px; background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r-lg); padding: 22px 24px 22px 18px; box-shadow: var(--sh-1); animation: rise var(--dur) var(--ease) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.stamp { text-align: center; border-right: 1px solid var(--hairline); padding-right: 14px; color: var(--cocoa); align-self: start; }
+.stamp-day { display: block; font-family: var(--font-display); font-size: 2rem; line-height: 1; color: var(--ink); }
+.stamp-month { display: block; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+.stamp-year { display: block; font-size: 0.8rem; color: var(--muted); }
+article.memory .body { min-width: 0; }
+article.memory h3 { margin: 0 0 6px; }
+article.memory .text { white-space: pre-wrap; overflow-wrap: anywhere; margin: 12px 0 0; font-size: 1.1rem; line-height: 1.65; }
+article.memory .meta { color: var(--muted); font-size: 0.9rem; margin-top: 10px; }
+article.memory .meta div { margin: 2px 0; overflow-wrap: anywhere; }
+article.memory .meta b { font-weight: 700; color: var(--cocoa); }
+.labels { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+.pill { border-radius: var(--r-pill); padding: 3px 12px; font-size: 0.85rem; font-weight: 700; background: var(--cream); color: var(--cocoa); }
+.pill.then { background: var(--dusk-tint); color: var(--dusk); }
+.pill.now { background: var(--moss-tint); color: var(--moss); }
+.pill.someday { background: var(--amber-tint); color: var(--amber-ink); }
+.pill.aspiration { background: transparent; border: 1px dashed var(--amber-deep); color: var(--amber-ink); }
+.pill.assisted { background: var(--parchment); color: var(--cocoa); }
+.pill.by { background: var(--ochre-tint); color: var(--ochre); }
+.pill.time { background: var(--cream); color: var(--muted); }
+.attachments { margin: 14px 0 0; display: grid; gap: 12px; }
+.attachments figure { margin: 0; }
+.attachments figcaption { color: var(--muted); font-size: 0.85rem; margin-top: 6px; overflow-wrap: anywhere; }
+.attachments img, .attachments video { max-width: 100%; max-height: 440px; border-radius: var(--r-md); border: 1px solid var(--hairline); display: block; background: var(--cream); }
+.attachments img { image-rendering: auto; }
+.attachments audio { width: 100%; }
+.empty { display: flex; align-items: center; gap: 14px; color: var(--muted); padding: 22px; border: 1px dashed var(--line); border-radius: var(--r-lg); }
+
+/* Removed */
+details.removed { margin: 28px 0; background: var(--cream); border-radius: var(--r-lg); padding: 6px 18px 14px; }
+details.removed summary { cursor: pointer; font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; padding: 12px 0; list-style: none; display: flex; align-items: center; gap: 12px; }
+details.removed summary::-webkit-details-marker { display: none; }
+details.removed summary::before { content: ""; width: 10px; height: 10px; border-right: 2px solid var(--cocoa); border-bottom: 2px solid var(--cocoa); transform: rotate(-45deg); transition: transform var(--dur) var(--ease); margin-left: 4px; }
+details.removed[open] summary::before { transform: rotate(45deg); }
+details.removed article.memory { opacity: 0.92; }
+
+/* People */
+ul.people { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); }
+li.person { display: flex; align-items: center; gap: 12px; background: var(--raised); border: 1px solid var(--hairline); border-radius: var(--r-lg); padding: 12px 16px; overflow-wrap: anywhere; }
+.initial { flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--amber-tint); color: var(--amber-ink); font-family: var(--font-display); font-size: 1.2rem; display: inline-flex; align-items: center; justify-content: center; }
+.person-name { font-weight: 700; }
+.person-meta { color: var(--muted); font-size: 0.9rem; display: block; }
+
+/* Documents */
+section.document { padding: 22px 24px; }
+section.document h3 { margin-bottom: 8px; }
+.document .meta { color: var(--muted); font-size: 0.9rem; }
+.document .meta div { margin: 2px 0; overflow-wrap: anywhere; }
+.document .text { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--paper); border: 1px solid var(--hairline); border-left: 4px solid var(--amber); border-radius: var(--r-md); padding: 14px 18px; margin: 12px 0 4px; }
+.document details { margin: 12px 0 0; }
+.document summary { cursor: pointer; font-weight: 700; color: var(--cocoa); padding: 6px 0; }
+
+footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--hairline); color: var(--muted); font-size: 0.9rem; }
+
+@media (max-width: 640px) {
+  body { padding-inline: 12px; }
+  section.panel { padding: 20px 18px; border-radius: var(--r-lg); }
+  header.masthead { gap: 12px; padding-top: 24px; }
+  .wordmark { font-size: 1.9rem; }
+  article.memory { grid-template-columns: 1fr; gap: 10px; padding: 18px; }
+  .stamp { border-right: 0; border-bottom: 1px dashed var(--hairline); text-align: left; padding: 0 0 8px; display: flex; align-items: baseline; gap: 8px; }
+  .stamp-day { font-size: 1.4rem; }
+  .stamp-month, .stamp-year { display: inline; margin: 0; }
+}
+@media print {
+  body { background: #fff; color: #000; padding: 0; font-size: 12pt; }
+  header.masthead, ol.steps, #pick-panel, #facts-panel, .actions, .copy-hint, button, .filebutton, footer { display: none !important; }
+  section.panel, article.memory, li.person { box-shadow: none; border-color: #bbb; break-inside: avoid; animation: none; }
+  details.removed { background: none; }
+  details.removed[open] summary::before { display: none; }
+  .attachments audio, .attachments video { display: none; }
+}
 </style>
 </head>
 <body>
-<header>
-  <h1>emma viewer</h1>
-  <p class="muted">Reads one <strong>.emma</strong> file on this computer. It sends nothing anywhere and never changes the file.</p>
+<header class="masthead">
+  <svg class="mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+    <circle class="mark-glow" cx="24" cy="27" r="19"></circle>
+    <path class="mark-ring" d="M20 6h8"></path>
+    <path class="mark-body" d="M17 10h14l3.5 7v17a7 7 0 0 1-7 7h-7a7 7 0 0 1-7-7V17z"></path>
+    <rect class="mark-window" x="19" y="19" width="10" height="14" rx="3"></rect>
+    <ellipse class="mark-flame" cx="24" cy="27" rx="3.6" ry="5"></ellipse>
+  </svg>
+  <div>
+    <h1 class="wordmark">emma<small>viewer</small></h1>
+    <p class="tagline">Reads one <strong>.emma</strong> file on this computer. Nothing is sent anywhere, and the file is never changed.</p>
+  </div>
 </header>
 <main id="app">
+  <ol class="steps" aria-label="Steps">
+    <li class="step" data-step="choose"><span class="step-n">1</span>Choose the file</li>
+    <li class="step" data-step="unlock"><span class="step-n">2</span>Unlock</li>
+    <li class="step" data-step="read"><span class="step-n">3</span>Read</li>
+  </ol>
+
   <section class="panel" id="pick-panel">
     <h2 class="visually-hidden">Choose a file</h2>
     <div class="row">
-      <label class="filebutton">Choose a .emma file<input type="file" id="file-input" accept=".emma,application/octet-stream"></label>
-      <span class="muted small">Nothing leaves this computer.</span>
+      <label class="filebutton"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3h8l5 5v13H6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path><path d="M14 3v5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path></svg>Choose a .emma file<input type="file" id="file-input" accept=".emma,application/octet-stream"></label>
     </div>
+    <p class="drop-hint">Or drop the file here. Nothing leaves this computer.</p>
     <p class="error" id="file-error" hidden></p>
   </section>
 
   <section class="panel" id="facts-panel" hidden>
-    <h2>About this file</h2>
+    <p class="panel-title">About this file</p>
     <dl class="facts">
       <dt>Name</dt><dd id="fact-name"></dd>
       <dt>Size</dt><dd id="fact-size"></dd>
       <dt>Format</dt><dd id="fact-format"></dd>
-      <dt>SHA-256</dt><dd id="fact-sha" class="small"></dd>
+      <dt>SHA-256</dt><dd id="fact-sha" class="mono"></dd>
     </dl>
-    <p class="muted small">What is inside stays hidden until the passphrase unlocks it.</p>
+    <hr class="divider">
     <div id="unlock-form">
       <label class="field" for="passphrase">Passphrase</label>
       <input type="password" id="passphrase" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="1024">
-      <p class="muted small">Spaces, capitals and accents count exactly as they were typed when the file was made.</p>
+      <p class="hint">Spaces, capitals and accents count exactly as they were typed when the file was made. What is inside stays hidden until it unlocks.</p>
       <div class="row">
         <button id="unlock-button" type="button" disabled>Unlock</button>
-        <button id="show-passphrase" type="button" class="secondary">Show passphrase</button>
+        <button id="show-passphrase" type="button" class="quiet">Show passphrase</button>
       </div>
       <p class="progress" id="progress" hidden></p>
       <p class="error" id="unlock-error" hidden></p>
@@ -117,31 +270,33 @@ footer { margin-top: 48px; color: var(--soft); font-size: 0.9rem; }
 
   <section id="vault-panel" hidden>
     <section class="panel">
-      <h2 id="vault-name"></h2>
-      <dl class="facts">
+      <p class="panel-title">Open vault</p>
+      <h2 class="vault-title" id="vault-name" tabindex="-1"></h2>
+      <div class="chips" id="vault-chips"></div>
+      <dl class="facts small">
         <dt>Contents</dt><dd id="vault-format"></dd>
-        <dt>Vault ID</dt><dd id="vault-id" class="small"></dd>
+        <dt>Vault ID</dt><dd id="vault-id" class="mono"></dd>
         <dt>Created</dt><dd id="vault-created"></dd>
         <dt>Updated</dt><dd id="vault-updated"></dd>
         <dt>Memories</dt><dd id="vault-counts"></dd>
       </dl>
       <div id="notices"></div>
-      <div class="row">
+      <div class="row actions">
         <button id="export-button" type="button" class="secondary">Save a plain copy</button>
-        <button id="close-button" type="button" class="secondary">Close file</button>
+        <button id="close-button" type="button" class="quiet">Close file</button>
       </div>
-      <p class="muted small">A plain copy makes two unencrypted files on this computer, <strong>vault.json</strong> and <strong>memories.md</strong>. Keep them as carefully as the passphrase.</p>
+      <p class="copy-hint">A plain copy makes two unencrypted files on this computer, <strong>vault.json</strong> and <strong>memories.md</strong>. Keep them as carefully as the passphrase.</p>
     </section>
     <h2 id="memories-heading">Memories</h2>
     <div id="memories"></div>
-    <details id="removed-section" hidden>
+    <details id="removed-section" class="removed" hidden>
       <summary id="removed-summary">Removed by the owner</summary>
       <p class="muted small">The owner moved these to Trash. They were kept in the file, not erased.</p>
       <div id="removed"></div>
     </details>
     <section id="people-section" hidden>
       <h2>People</h2>
-      <ul class="plain" id="people"></ul>
+      <ul class="people" id="people"></ul>
     </section>
     <section id="documents-section" hidden>
       <h2>Identity documents</h2>
@@ -851,6 +1006,12 @@ const EmmaViewer = (() => {
     const pad = n => String(n).padStart(2, '0');
     return date.getUTCDate() + ' ' + MONTHS[date.getUTCMonth()] + ' ' + date.getUTCFullYear() + ' at ' + pad(date.getUTCHours()) + ':' + pad(date.getUTCMinutes()) + ' UTC';
   }
+  function dateParts(iso) {
+    if (!isString(iso)) return null;
+    const date = new Date(iso);
+    if (!Number.isFinite(date.getTime())) return null;
+    return { day: String(date.getUTCDate()), month: MONTHS[date.getUTCMonth()].slice(0, 3), year: String(date.getUTCFullYear()) };
+  }
   function toMarkdown(reading, fileFacts) {
     const lines = [];
     lines.push('# ' + reading.vault.name);
@@ -924,7 +1085,7 @@ const EmmaViewer = (() => {
     return lines.join('\n');
   }
 
-  return Object.freeze({ ERRORS, ViewerError, MEDIA_TYPES, ITERATIONS, MAX_FILE_BYTES, inspect, unlock, parseStrictJSON, readPayload, open, toMarkdown, friendlyDate, decodeBase64, sortedKeysJSON, referenceSecondsToISO });
+  return Object.freeze({ ERRORS, ViewerError, MEDIA_TYPES, ITERATIONS, MAX_FILE_BYTES, inspect, unlock, parseStrictJSON, readPayload, open, toMarkdown, friendlyDate, dateParts, decodeBase64, sortedKeysJSON, referenceSecondsToISO });
 })();
 globalThis.EmmaViewer = EmmaViewer;
 
@@ -934,6 +1095,7 @@ if (typeof document !== 'undefined' && document.getElementById('app')) {
   const state = { bytes: null, fileName: '', facts: null, sha256: '', plaintext: null, reading: null, blobURLs: [] };
   const setText = (id, value) => { $(id).textContent = value; };
   const show = (id, visible) => { $(id).hidden = !visible; };
+  const setStep = step => { document.body.dataset.step = step; };
   const clear = element => { while (element.firstChild) element.removeChild(element.firstChild); };
   const el = (tag, className, textValue) => {
     const node = document.createElement(tag);
@@ -941,20 +1103,39 @@ if (typeof document !== 'undefined' && document.getElementById('app')) {
     if (textValue !== undefined) node.textContent = textValue;
     return node;
   };
+  // A meta line: a bold label followed by plain text, built without markup.
+  const line = (label, value) => {
+    const node = el('div');
+    node.appendChild(el('b', null, label + ' '));
+    node.appendChild(document.createTextNode(value));
+    return node;
+  };
   const hex = buffer => Array.from(new Uint8Array(buffer), byte => byte.toString(16).padStart(2, '0')).join('');
   const nextFrame = () => new Promise(resolve => setTimeout(resolve, 20));
+  const plural = (count, one, many) => count + ' ' + (count === 1 ? one : many);
+  const pillClass = label => {
+    if (label === 'Then') return 'pill then';
+    if (label === 'Now') return 'pill now';
+    if (label === 'Someday') return 'pill someday';
+    if (label === 'Aspiration, not prediction') return 'pill aspiration';
+    if (label === 'agent-assisted') return 'pill assisted';
+    if (label.startsWith('Time-aware record')) return 'pill time';
+    return 'pill by';
+  };
 
   function reset() {
     for (const url of state.blobURLs) URL.revokeObjectURL(url);
     state.blobURLs = [];
     if (state.plaintext) state.plaintext.fill(0);
     state.plaintext = null; state.reading = null; state.bytes = null; state.facts = null; state.sha256 = ''; state.fileName = '';
-    clear($('memories')); clear($('removed')); clear($('people')); clear($('documents')); clear($('notices'));
+    clear($('memories')); clear($('removed')); clear($('people')); clear($('documents')); clear($('notices')); clear($('vault-chips'));
     $('passphrase').value = '';
     $('file-input').value = '';
-    show('vault-panel', false); show('facts-panel', false); show('file-error', false); show('unlock-error', false); show('progress', false);
+    show('pick-panel', true); show('vault-panel', false); show('facts-panel', false); show('file-error', false); show('unlock-error', false); show('progress', false);
     show('removed-section', false); show('people-section', false); show('documents-section', false);
     $('unlock-button').disabled = true;
+    $('pick-panel').classList.remove('dragging');
+    setStep('choose');
   }
 
   async function chooseFile(file) {
@@ -973,6 +1154,7 @@ if (typeof document !== 'undefined' && document.getElementById('app')) {
     setText('fact-format', state.facts.legacy ? 'EMMA/1.0 (legacy, header not authenticated)' : 'EMMA/2.0 · PBKDF2 ' + state.facts.iterations.toLocaleString('en-US') + ' rounds · AES-256-GCM');
     setText('fact-sha', state.sha256);
     show('facts-panel', true);
+    setStep('unlock');
     $('unlock-button').disabled = $('passphrase').value.length === 0;
     $('passphrase').focus();
   }
@@ -1003,25 +1185,32 @@ if (typeof document !== 'undefined' && document.getElementById('app')) {
     }
   }
 
+  function renderStamp(iso) {
+    const stamp = el('div', 'stamp');
+    const parts = EmmaViewer.dateParts(iso);
+    if (parts) {
+      stamp.appendChild(el('span', 'stamp-day', parts.day));
+      stamp.appendChild(el('span', 'stamp-month', parts.month));
+      stamp.appendChild(el('span', 'stamp-year', parts.year));
+    } else {
+      stamp.appendChild(el('span', 'stamp-day', '·'));
+      stamp.appendChild(el('span', 'stamp-month', 'no date'));
+    }
+    return stamp;
+  }
+
   function renderCard(memory, removed) {
     const article = el('article', 'memory');
-    if (memory.title !== null) article.appendChild(el('h3', null, memory.title));
-    const meta = el('div', 'meta');
-    meta.appendChild(el('div', null, 'Saved ' + EmmaViewer.friendlyDate(memory.saved)));
-    if (memory.about !== null) meta.appendChild(el('div', null, 'About ' + memory.about));
-    if (removed) meta.appendChild(el('div', null, 'Removed by the owner ' + EmmaViewer.friendlyDate(memory.removedAt)));
-    if (memory.sourceLine !== null) meta.appendChild(el('div', null, 'Source: ' + memory.sourceLine));
-    if (memory.consentLine !== null) meta.appendChild(el('div', null, 'Consent: ' + memory.consentLine));
-    if (memory.people.length) meta.appendChild(el('div', null, 'People: ' + memory.people.join(', ')));
-    if (memory.tags.length) meta.appendChild(el('div', null, 'Tags: ' + memory.tags.join(', ')));
-    article.appendChild(meta);
+    article.appendChild(renderStamp(memory.saved));
+    const body = el('div', 'body');
+    if (memory.title !== null) body.appendChild(el('h3', null, memory.title));
     if (memory.labels.length) {
       const labels = el('div', 'labels');
-      for (const label of memory.labels) labels.appendChild(el('span', label === 'Aspiration, not prediction' ? 'pill someday' : 'pill', label));
-      article.appendChild(labels);
+      for (const label of memory.labels) labels.appendChild(el('span', pillClass(label), label));
+      body.appendChild(labels);
     }
-    if (memory.textNote !== null) article.appendChild(el('p', 'muted small', 'Viewer note: ' + memory.textNote));
-    if (memory.text) article.appendChild(el('p', 'text', memory.text));
+    if (memory.textNote !== null) body.appendChild(el('p', 'muted small', 'Viewer note: ' + memory.textNote));
+    if (memory.text) body.appendChild(el('p', 'text', memory.text));
     if (memory.attachments.length) {
       const list = el('div', 'attachments');
       for (const item of memory.attachments) {
@@ -1040,29 +1229,47 @@ if (typeof document !== 'undefined' && document.getElementById('app')) {
         figure.appendChild(el('figcaption', null, item.name + ' · ' + item.type + ' · ' + item.size.toLocaleString('en-US') + ' bytes'));
         list.appendChild(figure);
       }
-      article.appendChild(list);
+      body.appendChild(list);
     }
+    const meta = el('div', 'meta');
+    meta.appendChild(line('Saved', EmmaViewer.friendlyDate(memory.saved)));
+    if (memory.about !== null) meta.appendChild(line('About', memory.about));
+    if (removed) meta.appendChild(line('Removed by the owner', EmmaViewer.friendlyDate(memory.removedAt)));
+    if (memory.sourceLine !== null) meta.appendChild(line('Source', memory.sourceLine));
+    if (memory.consentLine !== null) meta.appendChild(line('Consent', memory.consentLine));
+    if (memory.people.length) meta.appendChild(line('People', memory.people.join(', ')));
+    if (memory.tags.length) meta.appendChild(line('Tags', memory.tags.join(', ')));
+    body.appendChild(meta);
+    article.appendChild(body);
     return article;
   }
 
   function render(reading) {
     show('facts-panel', false);
+    show('pick-panel', false);
     setText('vault-name', reading.vault.name);
-    setText('vault-format', (state.facts.envelope) + ' · ' + reading.payloadSchema + (reading.readAs !== reading.payloadSchema ? ' (read as ' + reading.readAs + ')' : ''));
+    const chips = $('vault-chips');
+    clear(chips);
+    chips.appendChild(el('span', 'chip', reading.kind === 'native' ? 'Backup from the emma app' : reading.kind === 'legacy' ? 'Legacy 1.0 file' : 'Web app vault'));
+    chips.appendChild(el('span', 'chip', plural(reading.memories.length, 'memory', 'memories')));
+    if (reading.removed.length) chips.appendChild(el('span', 'chip', reading.removed.length + ' in Trash'));
+    if (reading.people.length) chips.appendChild(el('span', 'chip', plural(reading.people.length, 'person', 'people')));
+    if (reading.documents.length) chips.appendChild(el('span', 'chip', plural(reading.documents.length, 'document', 'documents')));
+    setText('vault-format', state.facts.envelope + ' · ' + reading.payloadSchema + (reading.readAs !== reading.payloadSchema ? ' (read as ' + reading.readAs + ')' : ''));
     setText('vault-id', reading.vault.id || 'not recorded');
     setText('vault-created', EmmaViewer.friendlyDate(reading.vault.created));
     setText('vault-updated', EmmaViewer.friendlyDate(reading.vault.updated));
-    const counts = [reading.memories.length + (reading.memories.length === 1 ? ' memory' : ' memories')];
+    const counts = [plural(reading.memories.length, 'memory', 'memories')];
     if (reading.removed.length) counts.push(reading.removed.length + ' removed by the owner');
-    if (reading.people.length) counts.push(reading.people.length + (reading.people.length === 1 ? ' person' : ' people'));
-    if (reading.documents.length) counts.push(reading.documents.length + (reading.documents.length === 1 ? ' identity document' : ' identity documents'));
+    if (reading.people.length) counts.push(plural(reading.people.length, 'person', 'people'));
+    if (reading.documents.length) counts.push(plural(reading.documents.length, 'identity document', 'identity documents'));
     setText('vault-counts', counts.join(' · '));
     const notices = $('notices');
     clear(notices);
     for (const notice of reading.notices) notices.appendChild(el('p', 'notice', notice));
     const memories = $('memories');
     clear(memories);
-    if (!reading.memories.length) memories.appendChild(el('p', 'muted', 'This file holds no memories.'));
+    if (!reading.memories.length) memories.appendChild(el('p', 'empty', 'This file holds no memories.'));
     for (const memory of reading.memories) memories.appendChild(renderCard(memory, false));
     const removed = $('removed');
     clear(removed);
@@ -1072,7 +1279,15 @@ if (typeof document !== 'undefined' && document.getElementById('app')) {
     show('removed-section', reading.removed.length > 0);
     const people = $('people');
     clear(people);
-    for (const person of reading.people) people.appendChild(el('li', null, person.name + (person.relationship !== null ? ' · ' + person.relationship : '') + ' · ' + person.memoryCount + (person.memoryCount === 1 ? ' memory' : ' memories')));
+    for (const person of reading.people) {
+      const item = el('li', 'person');
+      item.appendChild(el('span', 'initial', Array.from(person.name.trim())[0] || '·'));
+      const text = el('span');
+      text.appendChild(el('span', 'person-name', person.name));
+      text.appendChild(el('span', 'person-meta', (person.relationship !== null ? person.relationship + ' · ' : '') + plural(person.memoryCount, 'memory', 'memories')));
+      item.appendChild(text);
+      people.appendChild(item);
+    }
     show('people-section', reading.people.length > 0);
     const documents = $('documents');
     clear(documents);
@@ -1083,11 +1298,11 @@ if (typeof document !== 'undefined' && document.getElementById('app')) {
       versions.forEach((version, index) => {
         const holder = index === 0 ? section : el('details');
         if (index !== 0) holder.appendChild(el('summary', null, 'Version ' + version.number));
-        const meta = el('div', 'meta muted small');
-        meta.appendChild(el('div', null, (index === 0 ? 'Latest version ' : 'Version ') + version.number + ' · created ' + EmmaViewer.friendlyDate(version.createdAt) + ' · scope ' + version.scope.mode + (version.scope.projectId !== undefined ? ' (project ' + version.scope.projectId + ')' : '')));
-        meta.appendChild(el('div', null, 'Source: ' + version.provenance.reference + ' · ' + version.provenance.creator + ' · ' + version.provenance.originalName + ' · captured ' + EmmaViewer.friendlyDate(version.provenance.capturedAt)));
-        meta.appendChild(el('div', null, 'Reviewed by ' + version.review.by + ' ' + EmmaViewer.friendlyDate(version.review.at)));
-        for (const event of version.endorsements) meta.appendChild(el('div', null, 'Horizon ' + event.status + ' by ' + event.by + ' ' + EmmaViewer.friendlyDate(event.at) + (event.status === 'endorsed' ? ' · an aspiration the owner endorsed, not a past fact' : '')));
+        const meta = el('div', 'meta');
+        meta.appendChild(line(index === 0 ? 'Latest version' : 'Version', version.number + ' · created ' + EmmaViewer.friendlyDate(version.createdAt) + ' · scope ' + version.scope.mode + (version.scope.projectId !== undefined ? ' (project ' + version.scope.projectId + ')' : '')));
+        meta.appendChild(line('Source', version.provenance.reference + ' · ' + version.provenance.creator + ' · ' + version.provenance.originalName + ' · captured ' + EmmaViewer.friendlyDate(version.provenance.capturedAt)));
+        meta.appendChild(line('Reviewed', 'by ' + version.review.by + ' ' + EmmaViewer.friendlyDate(version.review.at)));
+        for (const event of version.endorsements) meta.appendChild(line('Horizon ' + event.status, 'by ' + event.by + ' ' + EmmaViewer.friendlyDate(event.at) + (event.status === 'endorsed' ? ' · an aspiration the owner endorsed, not a past fact' : '')));
         holder.appendChild(meta);
         holder.appendChild(el('p', 'text', version.text));
         if (index !== 0) section.appendChild(holder);
@@ -1096,6 +1311,7 @@ if (typeof document !== 'undefined' && document.getElementById('app')) {
     }
     show('documents-section', reading.documents.length > 0);
     show('vault-panel', true);
+    setStep('read');
     $('vault-name').focus();
   }
 
@@ -1116,6 +1332,10 @@ if (typeof document !== 'undefined' && document.getElementById('app')) {
   }
 
   $('file-input').addEventListener('change', event => { chooseFile(event.target.files[0]); });
+  const pick = $('pick-panel');
+  pick.addEventListener('dragover', event => { event.preventDefault(); pick.classList.add('dragging'); });
+  pick.addEventListener('dragleave', () => { pick.classList.remove('dragging'); });
+  pick.addEventListener('drop', event => { event.preventDefault(); pick.classList.remove('dragging'); chooseFile(event.dataTransfer && event.dataTransfer.files ? event.dataTransfer.files[0] : null); });
   $('passphrase').addEventListener('input', () => { $('unlock-button').disabled = $('passphrase').value.length === 0 || !state.bytes; });
   $('passphrase').addEventListener('keydown', event => { if (event.key === 'Enter' && !$('unlock-button').disabled) unlockFile(); });
   $('unlock-button').addEventListener('click', unlockFile);
@@ -1128,6 +1348,7 @@ if (typeof document !== 'undefined' && document.getElementById('app')) {
   $('export-button').addEventListener('click', exportPlainCopy);
   $('close-button').addEventListener('click', reset);
   window.addEventListener('pagehide', reset);
+  setStep('choose');
 }
 </script>
 </body>

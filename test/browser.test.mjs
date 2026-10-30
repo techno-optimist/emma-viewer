@@ -63,6 +63,8 @@ for (const url of ['file', 'http']) {
         assert.equal(await page.locator('#people li').count(), vector.counts.people, 'people');
         assert.equal(await page.locator('#documents section.document').count(), vector.counts.identityDocuments, 'documents');
         assert.equal(await page.locator('#passphrase').inputValue(), '', 'passphrase field cleared after unlock');
+        assert.equal(await page.locator('#progress').isVisible(), false, 'progress indicator hidden after unlock');
+        assert.equal(await page.locator('#pick-panel').isVisible(), false, 'file chooser steps aside while reading');
         if (vector.kind === 'legacy') assert.match(await page.locator('#notices').textContent(), /Legacy EMMA 1\.0 file\. Its header was not authenticated/);
         if (vector.file === 'web-v3.emma') {
           assert.equal(await page.locator('#memories img[src^="blob:"]').count(), 1);
@@ -93,6 +95,7 @@ for (const url of ['file', 'http']) {
         await page.click('#close-button');
         await page.waitForSelector('#vault-panel[hidden]', { state: 'attached' });
         assert.equal(await page.locator('#memories article').count(), 0);
+        assert.equal(await page.locator('#pick-panel').isVisible(), true, 'file chooser is back after closing');
         assert.deepEqual(externalRequests(requests), [], 'no network requests');
         if (url === 'http') assert.deepEqual(serverHits, ['/emma-viewer.html'], 'the server saw only the page itself');
         assert.deepEqual(consoleErrors, [], 'no console errors or CSP violations');

@@ -17,6 +17,10 @@ First version of the offline reader.
   `memories.md`.
 - Everything else is refused with one of four fixed sentences. Duplicate JSON
   keys are refused.
+- Lantern look from emma's own kit: amber, paper, cocoa and dusk, a serif
+  wordmark when an installed serif is available, three visible steps (choose,
+  unlock, read), drag-and-drop, date stamps on cards, a print stylesheet.
+  Installed fonts only; nothing is fetched.
 - Tests: 41 CC0 vectors with golden readings; headless Chromium with a
   zero-request assertion from `file://` and http; grep gate; CSP hash and
   SHA256SUMS checks; independent Node and Python readers. On 2026-10-29:
