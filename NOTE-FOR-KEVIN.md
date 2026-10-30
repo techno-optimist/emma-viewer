@@ -1,8 +1,7 @@
 # Note for Kevin: emma viewer 0.1
 
 Short version: the viewer works offline from one file, every test passes, and
-nothing is public yet. One click is needed from you before anything goes on
-GitHub.
+the repository is public at https://github.com/techno-optimist/emma-viewer.
 
 ## Try it
 
@@ -12,10 +11,9 @@ that file is invented.
 
 ## What you need to decide
 
-1. **Public repo.** The plan is `techno-optimist/emma-viewer`, public, with the
-   Apache-2.0 code licence and CC0 for the spec and fixtures. Nothing has been
-   created or pushed. Say yes and the session creates it with `gh` and pushes
-   this history.
+1. **Public repo.** Done on 2026-10-29 with your yes: the code is public at
+   https://github.com/techno-optimist/emma-viewer (Apache-2.0 code, CC0 spec
+   and fixtures).
 2. **Answers the design panel recommended, still unconfirmed by you:**
    unknown formats are refused with no raw dump (built that way); voice
    recordings are never in a `.emma` file and the README says so (built that
